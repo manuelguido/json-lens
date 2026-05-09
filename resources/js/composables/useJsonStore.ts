@@ -376,6 +376,55 @@ return;
     bumpExpanded();
 }
 
+function duplicateNode(path: JsonPath) {
+    if (document.value === null || path.length === 0) {
+return;
+}
+
+    const parentPath = path.slice(0, -1);
+    const parent = getAtPath(document.value, parentPath);
+    const value = getAtPath(document.value, path);
+
+    if (value === undefined || parent === undefined || parent === null) {
+return;
+}
+
+    // Deep clone via JSON round-trip — values are pure JSON.
+    let clone: JsonValue;
+
+    try {
+        clone = JSON.parse(JSON.stringify(value)) as JsonValue;
+    } catch {
+        return;
+    }
+
+    pushHistory();
+    const lastSeg = path[path.length - 1];
+
+    if (Array.isArray(parent) && typeof lastSeg === 'number') {
+        const arr = parent.slice();
+        arr.splice(lastSeg + 1, 0, clone);
+        document.value = setAtPath(document.value, parentPath, arr);
+        selectedId.value = pathToId([...parentPath, lastSeg + 1]);
+    } else if (
+        parent && typeof parent === 'object' && !Array.isArray(parent)
+        && typeof lastSeg === 'string'
+    ) {
+        let candidate = `${lastSeg}_copy`;
+        const obj = parent as Record<string, JsonValue>;
+        let i = 2;
+
+        while (Object.prototype.hasOwnProperty.call(obj, candidate)) {
+            candidate = `${lastSeg}_copy_${i++}`;
+        }
+
+        document.value = setAtPath(document.value, [...parentPath, candidate], clone);
+        selectedId.value = pathToId([...parentPath, candidate]);
+    }
+
+    bumpExpanded();
+}
+
 function undo() {
     if (undoStack.length === 0) {
 return;
@@ -487,6 +536,7 @@ export function useJsonStore() {
         renameNodeKey,
         addProperty,
         appendItem,
+        duplicateNode,
         undo,
         redo,
         // lifecycle

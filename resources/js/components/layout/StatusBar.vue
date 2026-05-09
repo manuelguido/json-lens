@@ -3,11 +3,13 @@ import { computed } from 'vue';
 import Icon from '@/components/common/Icon.vue';
 import { useJsonSearch } from '@/composables/useJsonSearch';
 import { useJsonStore } from '@/composables/useJsonStore';
+import { useUiState } from '@/composables/useUiState';
 import { formatBytes, formatNumber } from '@/lib/format';
 import { pathToDisplay } from '@/lib/jsonPath';
 
 const store = useJsonStore();
 const search = useJsonSearch();
+const ui = useUiState();
 
 const selectedPath = computed(() => {
     const id = store.selectedId.value;
@@ -71,6 +73,20 @@ return { kind: 'empty' as const, text: 'No document loaded' };
         </template>
 
         <div class="flex-1" />
+
+        <!-- Mode pills -->
+        <span class="flex items-center gap-1" :title="`View: ${ui.state.viewMode}`">
+            <Icon :name="ui.state.viewMode === 'graph' ? 'graph' : 'tree'" :size="11" />
+            {{ ui.state.viewMode === 'graph' ? 'Graph' : 'Tree' }}
+        </span>
+        <span
+            class="flex items-center gap-1"
+            :style="ui.state.editMode ? 'color: var(--color-warning);' : ''"
+        >
+            <Icon :name="ui.state.editMode ? 'unlock' : 'lock'" :size="11" />
+            {{ ui.state.editMode ? 'Edit' : 'Read-only' }}
+        </span>
+        <div class="h-3 w-px bg-[var(--color-border)]" />
 
         <!-- Path -->
         <span v-if="selectedPath" class="truncate font-mono text-[var(--color-fg-muted)]">

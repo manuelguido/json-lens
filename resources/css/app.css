@@ -191,3 +191,331 @@ mark.jl-match[data-active='true'] {
     box-shadow: 0 0 0 2px var(--color-accent-ring);
     border-radius: 6px;
 }
+
+/* ---------------------------------------------------------------------------
+ * Graph view
+ * ------------------------------------------------------------------------- */
+.gv-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    cursor: grab;
+    background-color: var(--color-app-bg);
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
+    background-size: 24px 24px;
+    background-position: 0 0;
+    user-select: none;
+}
+.gv-canvas[data-panning='true'] {
+    cursor: grabbing;
+}
+.gv-layer {
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+.gv-edges {
+    position: absolute;
+    overflow: visible;
+    pointer-events: none;
+}
+.gv-edges path {
+    fill: none;
+    stroke: var(--color-border-strong);
+    stroke-width: 1.5;
+    transition: stroke 120ms ease-out;
+}
+.gv-edges path[data-active='true'] {
+    stroke: var(--color-accent);
+}
+
+/* Node card */
+.gv-node {
+    position: absolute;
+    box-sizing: border-box;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.02) inset,
+        0 8px 18px -10px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    cursor: pointer;
+    transition:
+        border-color 120ms ease-out,
+        box-shadow 120ms ease-out,
+        transform 120ms ease-out;
+}
+.gv-node::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--gv-accent, var(--color-border-strong));
+}
+.gv-node:hover {
+    border-color: var(--color-border-strong);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.04) inset,
+        0 12px 26px -12px rgba(0, 0, 0, 0.7);
+}
+.gv-node[data-selected='true'] {
+    border-color: var(--color-accent);
+    box-shadow:
+        0 0 0 1px var(--color-accent-ring),
+        0 12px 26px -12px rgba(0, 0, 0, 0.7);
+}
+.gv-node[data-match='true'] {
+    border-color: var(--color-warning);
+}
+.gv-node[data-match-active='true'] {
+    box-shadow:
+        0 0 0 2px var(--color-highlight-active),
+        0 12px 26px -12px rgba(0, 0, 0, 0.7);
+}
+.gv-node[data-kind='object'] {
+    --gv-accent: var(--color-accent);
+}
+.gv-node[data-kind='array'] {
+    --gv-accent: #b388ff;
+}
+.gv-node[data-kind='string'] {
+    --gv-accent: var(--color-tok-string);
+}
+.gv-node[data-kind='number'] {
+    --gv-accent: var(--color-tok-number);
+}
+.gv-node[data-kind='boolean'] {
+    --gv-accent: var(--color-tok-boolean);
+}
+.gv-node[data-kind='null'] {
+    --gv-accent: var(--color-tok-null);
+}
+
+/* Node action chips on hover (edit mode) */
+.gv-node-actions {
+    position: absolute;
+    inset: auto 6px 6px auto;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 100ms ease-out;
+}
+.gv-node:hover .gv-node-actions {
+    opacity: 1;
+}
+.gv-node-action {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 5px;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition:
+        color 100ms ease-out,
+        border-color 100ms ease-out,
+        background-color 100ms ease-out;
+}
+.gv-node-action:hover {
+    color: var(--color-fg);
+    background: var(--color-surface-3);
+    border-color: var(--color-border-strong);
+}
+.gv-node-action[data-danger='true']:hover {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+/* Floating graph toolbar */
+.gv-toolbar {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: rgba(22, 26, 33, 0.85);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.gv-toolbar button {
+    height: 26px;
+    min-width: 26px;
+    padding: 0 6px;
+    border-radius: 5px;
+    color: var(--color-fg-muted);
+    transition:
+        color 100ms ease-out,
+        background-color 100ms ease-out;
+}
+.gv-toolbar button:hover {
+    background: var(--color-surface-3);
+    color: var(--color-fg);
+}
+
+/* Minimap */
+.gv-minimap {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 200px;
+    height: 140px;
+    background: rgba(18, 21, 27, 0.92);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.gv-minimap rect.mm-node {
+    fill: var(--color-surface-3);
+}
+.gv-minimap rect.mm-node[data-selected='true'] {
+    fill: var(--color-accent);
+}
+.gv-minimap rect.mm-viewport {
+    fill: rgba(124, 156, 255, 0.08);
+    stroke: var(--color-accent);
+    stroke-width: 1;
+    cursor: move;
+}
+
+/* Edit mode banner */
+.gv-edit-banner {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(224, 184, 120, 0.08);
+    border: 1px solid rgba(224, 184, 120, 0.3);
+    color: var(--color-warning);
+    font-size: 12px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+/* Breadcrumbs */
+.gv-breadcrumbs {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: rgba(22, 26, 33, 0.85);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    font-size: 12px;
+    max-width: 60%;
+    overflow: hidden;
+}
+.gv-breadcrumbs button {
+    color: var(--color-fg-muted);
+    transition: color 100ms ease-out;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+.gv-breadcrumbs button:hover {
+    color: var(--color-fg);
+    background: var(--color-surface-3);
+}
+.gv-breadcrumbs .crumb-sep {
+    color: var(--color-fg-faint);
+    font-size: 10px;
+}
+
+/* Context menu */
+.jl-menu {
+    position: fixed;
+    z-index: 100;
+    min-width: 200px;
+    padding: 4px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 8px;
+    box-shadow: 0 18px 48px -12px rgba(0, 0, 0, 0.7);
+    user-select: none;
+}
+.jl-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    color: var(--color-fg);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 80ms ease-out;
+}
+.jl-menu-item:hover {
+    background: var(--color-surface-3);
+}
+.jl-menu-item[data-disabled='true'] {
+    color: var(--color-fg-faint);
+    cursor: not-allowed;
+}
+.jl-menu-item[data-disabled='true']:hover {
+    background: transparent;
+}
+.jl-menu-item[data-danger='true']:hover {
+    background: rgba(224, 120, 120, 0.12);
+    color: var(--color-danger);
+}
+.jl-menu-item .menu-kbd {
+    margin-left: auto;
+    color: var(--color-fg-faint);
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+.jl-menu-sep {
+    height: 1px;
+    margin: 4px 6px;
+    background: var(--color-border);
+}
+
+/* Mode pill (toolbar) */
+.jl-segmented {
+    display: inline-flex;
+    padding: 2px;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: 7px;
+    gap: 2px;
+}
+.jl-segmented button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    color: var(--color-fg-muted);
+    transition:
+        color 100ms ease-out,
+        background-color 100ms ease-out;
+}
+.jl-segmented button[data-active='true'] {
+    color: var(--color-fg);
+    background: var(--color-surface-3);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+.jl-segmented button:hover:not([data-active='true']) {
+    color: var(--color-fg);
+}

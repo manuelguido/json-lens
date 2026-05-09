@@ -4,12 +4,14 @@ import Button from '@/components/common/Button.vue';
 import Icon from '@/components/common/Icon.vue';
 import { useJsonStore } from '@/composables/useJsonStore';
 import { useToasts } from '@/composables/useToasts';
+import { useUiState } from '@/composables/useUiState';
 import { formatBytes } from '@/lib/format';
-import { getAtPath, pathToDisplay } from '@/lib/jsonPath';
+import { getAtPath, parseEditedValue, pathToDisplay } from '@/lib/jsonPath';
 import type { JsonValueKind } from '@/lib/types';
 
 const store = useJsonStore();
 const toasts = useToasts();
+const ui = useUiState();
 
 const selectedRow = computed(() => {
     const id = store.selectedId.value;
@@ -122,6 +124,62 @@ return;
 
     store.deleteNode(selectedRow.value.path);
     toasts.info('Node deleted');
+}
+
+function duplicateSelected() {
+    if (!selectedRow.value || selectedRow.value.path.length === 0) {
+return;
+}
+
+    store.duplicateNode(selectedRow.value.path);
+    toasts.success('Node duplicated');
+}
+
+function addChild() {
+    if (!selectedRow.value || !selectedRow.value.isContainer) {
+return;
+}
+
+    if (selectedRow.value.kind === 'array') {
+        const raw = window.prompt('New item value (JSON literal):', '""');
+
+        if (raw === null) {
+return;
+}
+
+        store.appendItem(selectedRow.value.path, parseEditedValue(raw));
+        toasts.success('Item appended');
+    } else {
+        const key = window.prompt('New key:');
+
+        if (!key) {
+return;
+}
+
+        const raw = window.prompt('New value (JSON literal):', '""');
+
+        if (raw === null) {
+return;
+}
+
+        store.addProperty(selectedRow.value.path, key, parseEditedValue(raw));
+        toasts.success('Property added');
+    }
+}
+
+function editValue() {
+    if (!selectedRow.value || selectedRow.value.isContainer) {
+return;
+}
+
+    const next = window.prompt('New value (JSON literal):', String(selectedRow.value.preview));
+
+    if (next === null) {
+return;
+}
+
+    store.updateValue(selectedRow.value.path, parseEditedValue(next));
+    toasts.success('Value updated');
 }
 
 const sectionMeta = ref(true);
@@ -255,14 +313,46 @@ return value.value;
                     <Button variant="subtle" size="xs" @click="copyPath">
                         <Icon name="copy" :size="11" /> Copy path
                     </Button>
-                    <Button
-                        variant="subtle"
-                        size="xs"
-                        :disabled="selectedRow.path.length === 0"
-                        @click="deleteSelected"
+                    <template v-if="ui.state.editMode">
+                        <Button
+                            variant="subtle"
+                            size="xs"
+                            :disabled="selectedRow.isContainer"
+                            @click="editValue"
+                        >
+                            <Icon name="edit" :size="11" /> Edit
+                        </Button>
+                        <Button
+                            variant="subtle"
+                            size="xs"
+                            :disabled="!selectedRow.isContainer"
+                            @click="addChild"
+                        >
+                            <Icon name="plus" :size="11" /> Add child
+                        </Button>
+                        <Button
+                            variant="subtle"
+                            size="xs"
+                            :disabled="selectedRow.path.length === 0"
+                            @click="duplicateSelected"
+                        >
+                            <Icon name="copy" :size="11" /> Duplicate
+                        </Button>
+                        <Button
+                            variant="subtle"
+                            size="xs"
+                            :disabled="selectedRow.path.length === 0"
+                            @click="deleteSelected"
+                        >
+                            <Icon name="trash" :size="11" /> Delete
+                        </Button>
+                    </template>
+                    <div
+                        v-else
+                        class="col-span-2 rounded-md border border-dashed border-[var(--color-border)] px-2 py-1.5 text-[11px] text-[var(--color-fg-muted)]"
                     >
-                        <Icon name="trash" :size="11" /> Delete
-                    </Button>
+                        Enable edit mode to modify structure.
+                    </div>
                 </div>
             </div>
 

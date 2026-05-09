@@ -5,6 +5,7 @@ import Icon from '@/components/common/Icon.vue';
 import { modSymbol } from '@/composables/useHotkeys';
 import { useJsonStore } from '@/composables/useJsonStore';
 import { useToasts } from '@/composables/useToasts';
+import { useUiState } from '@/composables/useUiState';
 
 const emit = defineEmits<{
     (e: 'open-search'): void;
@@ -14,6 +15,7 @@ const emit = defineEmits<{
 }>();
 
 const store = useJsonStore();
+const ui = useUiState();
 const toasts = useToasts();
 const mod = modSymbol();
 
@@ -72,6 +74,51 @@ function copyAll() {
         </div>
 
         <div class="flex-1" />
+
+        <!-- View mode switcher -->
+        <div class="jl-segmented" role="tablist" aria-label="View mode">
+            <button
+                type="button"
+                role="tab"
+                :data-active="ui.state.viewMode === 'tree' || undefined"
+                :title="`Tree view (${mod} 1)`"
+                @click="ui.setViewMode('tree')"
+            >
+                <Icon name="tree" :size="12" />
+                Tree
+            </button>
+            <button
+                type="button"
+                role="tab"
+                :data-active="ui.state.viewMode === 'graph' || undefined"
+                :title="`Graph view (${mod} 2)`"
+                @click="ui.setViewMode('graph')"
+            >
+                <Icon name="graph" :size="12" />
+                Graph
+            </button>
+        </div>
+
+        <!-- Edit mode toggle -->
+        <button
+            type="button"
+            class="jl-segmented"
+            :title="`Toggle edit mode (${mod} E)`"
+            style="cursor: pointer"
+            @click="ui.toggleEditMode()"
+        >
+            <span
+                class="flex items-center gap-1.5 px-2 py-1 text-[12px]"
+                :style="
+                    ui.state.editMode
+                        ? 'color: var(--color-warning);'
+                        : 'color: var(--color-fg-muted);'
+                "
+            >
+                <Icon :name="ui.state.editMode ? 'unlock' : 'lock'" :size="12" />
+                {{ ui.state.editMode ? 'Edit mode' : 'View mode' }}
+            </span>
+        </button>
 
         <!-- Actions cluster -->
         <div class="flex items-center gap-1">

@@ -13,11 +13,13 @@
 import { Head } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 
+import ContextMenu from '@/components/common/ContextMenu.vue';
 import Icon from '@/components/common/Icon.vue';
 import ToastStack from '@/components/common/ToastStack.vue';
 import ExportDialog from '@/components/dialogs/ExportDialog.vue';
 import ImportDialog from '@/components/dialogs/ImportDialog.vue';
 import ShortcutsDialog from '@/components/dialogs/ShortcutsDialog.vue';
+import GraphView from '@/components/graph/GraphView.vue';
 import JsonTree from '@/components/json/JsonTree.vue';
 import LeftExplorer from '@/components/layout/LeftExplorer.vue';
 import RightInspector from '@/components/layout/RightInspector.vue';
@@ -40,6 +42,7 @@ const toasts = useToasts();
 onMounted(() => {
     store.hydrate();
     store.startPersistence();
+    ui.hydrate();
 });
 
 /* ---- Global hotkeys ---- */
@@ -47,6 +50,9 @@ useHotkeys([
     { keys: 'mod+f', allowInInput: true, handler: () => ui.toggleSearch(true) },
     { keys: 'mod+o', allowInInput: true, handler: () => ui.open('import') },
     { keys: 'mod+s', allowInInput: true, handler: () => ui.open('export') },
+    { keys: 'mod+1', handler: () => ui.setViewMode('tree') },
+    { keys: 'mod+2', handler: () => ui.setViewMode('graph') },
+    { keys: 'mod+e', handler: () => ui.toggleEditMode() },
     { keys: 'mod+z', allowInInput: false, handler: () => store.undo() },
     { keys: 'mod+shift+z', allowInInput: false, handler: () => store.redo() },
     {
@@ -170,7 +176,8 @@ function hasFiles(e: DragEvent): boolean {
                 </header>
 
                 <div class="relative min-h-0 flex-1">
-                    <JsonTree />
+                    <JsonTree v-if="ui.state.viewMode === 'tree'" />
+                    <GraphView v-else />
                     <SearchPalette
                         :open="ui.state.searchOpen"
                         @close="
@@ -214,6 +221,7 @@ function hasFiles(e: DragEvent): boolean {
             </div>
         </Transition>
 
+        <ContextMenu />
         <ToastStack />
     </div>
 </template>

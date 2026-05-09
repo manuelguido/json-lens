@@ -13,6 +13,9 @@ const groups = [
             { keys: [mod, 'F'], label: 'Open search' },
             { keys: [mod, 'O'], label: 'Import JSON' },
             { keys: [mod, 'S'], label: 'Export JSON' },
+            { keys: [mod, '1'], label: 'Tree view' },
+            { keys: [mod, '2'], label: 'Graph view' },
+            { keys: [mod, 'E'], label: 'Toggle edit mode' },
             { keys: [mod, 'Z'], label: 'Undo' },
             { keys: [mod, '⇧', 'Z'], label: 'Redo' },
             { keys: ['?'], label: 'This help' },
@@ -27,6 +30,17 @@ const groups = [
             { keys: ['←'], label: 'Collapse / move up' },
             { keys: ['↵'], label: 'Toggle expand' },
             { keys: ['⌫', 'Del'], label: 'Delete selected node' },
+        ],
+    },
+    {
+        title: 'Graph view',
+        items: [
+            { keys: ['F'], label: 'Fit to screen' },
+            { keys: ['0'], label: 'Reset zoom' },
+            { keys: ['+', '−'], label: 'Zoom in / out' },
+            { keys: ['Wheel'], label: 'Zoom (cursor-anchored)' },
+            { keys: ['Drag'], label: 'Pan canvas' },
+            { keys: ['Right-click'], label: 'Context menu' },
         ],
     },
     {
