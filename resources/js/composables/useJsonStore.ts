@@ -8,12 +8,7 @@ import {
     renameKey,
     setAtPath,
 } from '@/lib/jsonPath';
-import type {
-    DocumentMeta,
-    JsonPath,
-    JsonValue,
-    TreeRow,
-} from '@/lib/types';
+import type { DocumentMeta, JsonPath, JsonValue, TreeRow } from '@/lib/types';
 
 /**
  * Single-file SPA store. Module-scoped so all components share the same
@@ -63,8 +58,8 @@ function bumpExpanded() {
 
 function flatten(root: JsonValue | null): TreeRow[] {
     if (root === null || root === undefined) {
-return [];
-}
+        return [];
+    }
 
     const rows: TreeRow[] = [];
     walk(root, [], 'root', null, 0, rows);
@@ -106,8 +101,8 @@ function walk(
     });
 
     if (!isContainer || !isExpanded) {
-return;
-}
+        return;
+    }
 
     if (kind === 'array') {
         const arr = value as JsonValue[];
@@ -145,11 +140,13 @@ const meta = computed<DocumentMeta>(() => {
     };
 
     if (document.value === null) {
-return m;
-}
+        return m;
+    }
 
     try {
-        m.bytes = new TextEncoder().encode(JSON.stringify(document.value)).length;
+        m.bytes = new TextEncoder().encode(
+            JSON.stringify(document.value),
+        ).length;
     } catch {
         m.bytes = 0;
     }
@@ -163,21 +160,21 @@ function countNodes(v: JsonValue, depth: number, m: DocumentMeta): void {
     m.nodeCount++;
 
     if (depth > m.maxDepth) {
-m.maxDepth = depth;
-}
+        m.maxDepth = depth;
+    }
 
     if (Array.isArray(v)) {
         m.arrayCount++;
 
         for (const item of v) {
-countNodes(item, depth + 1, m);
-}
+            countNodes(item, depth + 1, m);
+        }
     } else if (v !== null && typeof v === 'object') {
         m.objectCount++;
 
         for (const k of Object.keys(v)) {
-countNodes((v as Record<string, JsonValue>)[k], depth + 1, m);
-}
+            countNodes((v as Record<string, JsonValue>)[k], depth + 1, m);
+        }
     } else {
         m.primitiveCount++;
     }
@@ -197,8 +194,8 @@ function pushHistory() {
     undoStack.push(snapshot());
 
     if (undoStack.length > HISTORY_LIMIT) {
-undoStack.shift();
-}
+        undoStack.shift();
+    }
 
     redoStack.length = 0;
 }
@@ -257,18 +254,18 @@ function clear() {
 
 function toggleExpand(id: string) {
     if (expanded.value.has(id)) {
-expanded.value.delete(id);
-} else {
-expanded.value.add(id);
-}
+        expanded.value.delete(id);
+    } else {
+        expanded.value.add(id);
+    }
 
     bumpExpanded();
 }
 
 function expandAll() {
     if (document.value === null) {
-return;
-}
+        return;
+    }
 
     const next = new Set<string>();
     walkContainerIds(document.value, [], next);
@@ -297,12 +294,16 @@ function walkContainerIds(v: JsonValue, path: JsonPath, out: Set<string>) {
 
         if (Array.isArray(v)) {
             for (let i = 0; i < v.length; i++) {
-walkContainerIds(v[i], [...path, i], out);
-}
+                walkContainerIds(v[i], [...path, i], out);
+            }
         } else {
             for (const k of Object.keys(v)) {
-walkContainerIds((v as Record<string, JsonValue>)[k], [...path, k], out);
-}
+                walkContainerIds(
+                    (v as Record<string, JsonValue>)[k],
+                    [...path, k],
+                    out,
+                );
+            }
         }
     }
 }
@@ -313,8 +314,8 @@ function select(id: string | null) {
 
 function updateValue(path: JsonPath, value: JsonValue) {
     if (document.value === null) {
-return;
-}
+        return;
+    }
 
     pushHistory();
     document.value = setAtPath(document.value, path, value);
@@ -322,8 +323,8 @@ return;
 
 function deleteNode(path: JsonPath) {
     if (document.value === null || path.length === 0) {
-return;
-}
+        return;
+    }
 
     pushHistory();
     document.value = deleteAtPath(document.value, path);
@@ -333,8 +334,8 @@ return;
 
 function renameNodeKey(parentPath: JsonPath, oldKey: string, newKey: string) {
     if (document.value === null || oldKey === newKey) {
-return;
-}
+        return;
+    }
 
     pushHistory();
     document.value = renameKey(document.value, parentPath, oldKey, newKey);
@@ -343,14 +344,14 @@ return;
 
 function addProperty(parentPath: JsonPath, key: string, value: JsonValue) {
     if (document.value === null) {
-return;
-}
+        return;
+    }
 
     const parent = getAtPath(document.value, parentPath);
 
     if (!parent || typeof parent !== 'object' || Array.isArray(parent)) {
-return;
-}
+        return;
+    }
 
     pushHistory();
     document.value = setAtPath(document.value, [...parentPath, key], value);
@@ -361,33 +362,37 @@ return;
 
 function appendItem(arrayPath: JsonPath, value: JsonValue) {
     if (document.value === null) {
-return;
-}
+        return;
+    }
 
     const arr = getAtPath(document.value, arrayPath);
 
     if (!Array.isArray(arr)) {
-return;
-}
+        return;
+    }
 
     pushHistory();
-    document.value = setAtPath(document.value, [...arrayPath, arr.length], value);
+    document.value = setAtPath(
+        document.value,
+        [...arrayPath, arr.length],
+        value,
+    );
     expanded.value.add(pathToId(arrayPath));
     bumpExpanded();
 }
 
 function duplicateNode(path: JsonPath) {
     if (document.value === null || path.length === 0) {
-return;
-}
+        return;
+    }
 
     const parentPath = path.slice(0, -1);
     const parent = getAtPath(document.value, parentPath);
     const value = getAtPath(document.value, path);
 
     if (value === undefined || parent === undefined || parent === null) {
-return;
-}
+        return;
+    }
 
     // Deep clone via JSON round-trip — values are pure JSON.
     let clone: JsonValue;
@@ -407,8 +412,10 @@ return;
         document.value = setAtPath(document.value, parentPath, arr);
         selectedId.value = pathToId([...parentPath, lastSeg + 1]);
     } else if (
-        parent && typeof parent === 'object' && !Array.isArray(parent)
-        && typeof lastSeg === 'string'
+        parent &&
+        typeof parent === 'object' &&
+        !Array.isArray(parent) &&
+        typeof lastSeg === 'string'
     ) {
         let candidate = `${lastSeg}_copy`;
         const obj = parent as Record<string, JsonValue>;
@@ -418,7 +425,11 @@ return;
             candidate = `${lastSeg}_copy_${i++}`;
         }
 
-        document.value = setAtPath(document.value, [...parentPath, candidate], clone);
+        document.value = setAtPath(
+            document.value,
+            [...parentPath, candidate],
+            clone,
+        );
         selectedId.value = pathToId([...parentPath, candidate]);
     }
 
@@ -427,8 +438,8 @@ return;
 
 function undo() {
     if (undoStack.length === 0) {
-return;
-}
+        return;
+    }
 
     redoStack.push(snapshot());
     const prev = undoStack.pop()!;
@@ -437,8 +448,8 @@ return;
 
 function redo() {
     if (redoStack.length === 0) {
-return;
-}
+        return;
+    }
 
     undoStack.push(snapshot());
     const next = redoStack.pop()!;
@@ -452,12 +463,12 @@ const canRedo = computed(() => redoStack.length > 0);
 
 function persist() {
     if (!hydrated) {
-return;
-}
+        return;
+    }
 
     if (typeof window === 'undefined') {
-return;
-}
+        return;
+    }
 
     try {
         const data: PersistedState = {
@@ -499,8 +510,8 @@ function hydrate() {
 let watcherStarted = false;
 function startPersistence() {
     if (watcherStarted) {
-return;
-}
+        return;
+    }
 
     watcherStarted = true;
     watch([document, selectedId, sourceLabel, expandedVersion], persist, {

@@ -79,20 +79,20 @@ export function layoutGraph(
 
     for (const n of nodes) {
         if (n.x - GRAPH_NODE_W / 2 < minX) {
-minX = n.x - GRAPH_NODE_W / 2;
-}
+            minX = n.x - GRAPH_NODE_W / 2;
+        }
 
         if (n.x + GRAPH_NODE_W / 2 > maxX) {
-maxX = n.x + GRAPH_NODE_W / 2;
-}
+            maxX = n.x + GRAPH_NODE_W / 2;
+        }
 
         if (n.y - GRAPH_NODE_H / 2 < minY) {
-minY = n.y - GRAPH_NODE_H / 2;
-}
+            minY = n.y - GRAPH_NODE_H / 2;
+        }
 
         if (n.y + GRAPH_NODE_H / 2 > maxY) {
-maxY = n.y + GRAPH_NODE_H / 2;
-}
+            maxY = n.y + GRAPH_NODE_H / 2;
+        }
     }
 
     if (!Number.isFinite(minX)) {
@@ -154,7 +154,14 @@ function build(
 
             for (let i = 0; i < limit; i++) {
                 children.push(
-                    build(arr[i], [...path, i], 'array', String(i), rootDepth, expanded),
+                    build(
+                        arr[i],
+                        [...path, i],
+                        'array',
+                        String(i),
+                        rootDepth,
+                        expanded,
+                    ),
                 );
             }
 
@@ -166,7 +173,14 @@ function build(
 
             for (const k of Object.keys(obj)) {
                 children.push(
-                    build(obj[k], [...path, k], 'object', k, rootDepth, expanded),
+                    build(
+                        obj[k],
+                        [...path, k],
+                        'object',
+                        k,
+                        rootDepth,
+                        expanded,
+                    ),
                 );
             }
         }
@@ -182,8 +196,8 @@ function build(
             GRAPH_SIBLING_GAP * (children.length - 1);
 
         if (height < GRAPH_NODE_H) {
-height = GRAPH_NODE_H;
-}
+            height = GRAPH_NODE_H;
+        }
     }
 
     return { out, children, height };
@@ -218,8 +232,8 @@ function position(node: RawNode, x: number, yCenter: number): void {
     node.out.y = yCenter;
 
     if (node.children.length === 0) {
-return;
-}
+        return;
+    }
 
     const childX = x + GRAPH_NODE_W + GRAPH_LEVEL_GAP;
     let cursor = yCenter - node.height / 2;

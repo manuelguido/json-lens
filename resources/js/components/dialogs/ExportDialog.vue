@@ -15,8 +15,8 @@ const mode = ref<'pretty' | 'minified'>('pretty');
 
 const text = computed(() => {
     if (store.document.value === null) {
-return '';
-}
+        return '';
+    }
 
     return mode.value === 'pretty'
         ? JSON.stringify(store.document.value, null, 2)
@@ -39,7 +39,9 @@ function download() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = (store.sourceLabel.value ?? 'document') + (mode.value === 'minified' ? '.min.json' : '.json');
+    a.download =
+        (store.sourceLabel.value ?? 'document') +
+        (mode.value === 'minified' ? '.min.json' : '.json');
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -57,15 +59,23 @@ function download() {
     >
         <div
             v-if="open"
-            class="fixed inset-0 z-40 flex items-start justify-center bg-[#06080b]/70 backdrop-blur-[2px] pt-[12vh]"
+            class="fixed inset-0 z-40 flex items-start justify-center bg-[#06080b]/70 pt-[12vh] backdrop-blur-[2px]"
             @click.self="emit('close')"
             @keydown.esc="emit('close')"
         >
-            <div class="surface w-[640px] max-w-[92vw] rounded-xl border bg-[var(--color-surface-2)] shadow-2xl">
+            <div
+                class="surface w-[640px] max-w-[92vw] rounded-xl border bg-[var(--color-surface-2)] shadow-2xl"
+            >
                 <header class="flex items-center justify-between px-5 pt-4">
                     <div>
-                        <h2 class="text-[14px] font-semibold tracking-tight text-[var(--color-fg)]">Export</h2>
-                        <p class="mt-0.5 text-[12px] text-[var(--color-fg-muted)]">
+                        <h2
+                            class="text-[14px] font-semibold tracking-tight text-[var(--color-fg)]"
+                        >
+                            Export
+                        </h2>
+                        <p
+                            class="mt-0.5 text-[12px] text-[var(--color-fg-muted)]"
+                        >
                             Download or copy the current document.
                         </p>
                     </div>
@@ -83,25 +93,30 @@ function download() {
                         class="inline-flex rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-0.5"
                     >
                         <button
-                            v-for="m in (['pretty', 'minified'] as const)"
+                            v-for="m in ['pretty', 'minified'] as const"
                             :key="m"
                             type="button"
                             class="jl-focus rounded px-2.5 py-1 text-[11.5px] capitalize transition"
-                            :class="mode === m
-                                ? 'bg-[var(--color-surface-3)] text-[var(--color-fg)]'
-                                : 'text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]'"
+                            :class="
+                                mode === m
+                                    ? 'bg-[var(--color-surface-3)] text-[var(--color-fg)]'
+                                    : 'text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]'
+                            "
                             @click="mode = m"
                         >
                             {{ m }}
                         </button>
                     </div>
-                    <span class="text-[11.5px] text-[var(--color-fg-faint)]">{{ sizeLabel }}</span>
+                    <span class="text-[11.5px] text-[var(--color-fg-faint)]">{{
+                        sizeLabel
+                    }}</span>
                 </div>
 
                 <div class="p-4">
                     <pre
-                        class="surface max-h-[40vh] overflow-auto rounded-md bg-[var(--color-surface)] p-3 font-mono text-[12px] leading-relaxed text-[var(--color-fg)] whitespace-pre-wrap break-words"
-                    >{{ text || '— empty —' }}</pre>
+                        class="surface max-h-[40vh] overflow-auto rounded-md bg-[var(--color-surface)] p-3 font-mono text-[12px] leading-relaxed break-words whitespace-pre-wrap text-[var(--color-fg)]"
+                        >{{ text || '— empty —' }}</pre
+                    >
 
                     <div class="mt-3 flex items-center justify-end gap-2">
                         <button

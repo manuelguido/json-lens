@@ -88,8 +88,8 @@ let dragDepth = 0;
 
 function onDragEnter(e: DragEvent) {
     if (!hasFiles(e)) {
-return;
-}
+        return;
+    }
 
     dragDepth++;
     dragActive.value = true;
@@ -98,13 +98,13 @@ function onDragLeave() {
     dragDepth = Math.max(0, dragDepth - 1);
 
     if (dragDepth === 0) {
-dragActive.value = false;
-}
+        dragActive.value = false;
+    }
 }
 function onDragOver(e: DragEvent) {
     if (hasFiles(e)) {
-e.preventDefault();
-}
+        e.preventDefault();
+    }
 }
 async function onDrop(e: DragEvent) {
     e.preventDefault();
@@ -113,8 +113,8 @@ async function onDrop(e: DragEvent) {
     const file = e.dataTransfer?.files?.[0];
 
     if (!file) {
-return;
-}
+        return;
+    }
 
     const text = await file.text();
 
@@ -150,13 +150,21 @@ function hasFiles(e: DragEvent): boolean {
         <main class="flex min-h-0 flex-1 overflow-hidden">
             <LeftExplorer @open-import="ui.open('import')" />
 
-            <section class="relative flex min-w-0 flex-1 flex-col bg-[var(--color-surface)]">
+            <section
+                class="relative flex min-w-0 flex-1 flex-col bg-[var(--color-surface)]"
+            >
                 <!-- Tab strip / breadcrumb header -->
                 <header
-                    class="flex h-9 shrink-0 items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-app-bg-2)] pl-3 pr-2"
+                    class="flex h-9 shrink-0 items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-app-bg-2)] pr-2 pl-3"
                 >
-                    <Icon name="braces" :size="13" class="text-[var(--color-fg-faint)]" />
-                    <span class="text-[12px] font-medium text-[var(--color-fg)]">
+                    <Icon
+                        name="braces"
+                        :size="13"
+                        class="text-[var(--color-fg-faint)]"
+                    />
+                    <span
+                        class="text-[12px] font-medium text-[var(--color-fg)]"
+                    >
                         {{ store.sourceLabel.value ?? 'untitled.json' }}
                     </span>
                     <span
@@ -194,9 +202,18 @@ function hasFiles(e: DragEvent): boolean {
         <StatusBar />
 
         <!-- Dialogs -->
-        <ImportDialog :open="ui.state.dialog === 'import'" @close="ui.closeDialog()" />
-        <ExportDialog :open="ui.state.dialog === 'export'" @close="ui.closeDialog()" />
-        <ShortcutsDialog :open="ui.state.dialog === 'shortcuts'" @close="ui.closeDialog()" />
+        <ImportDialog
+            :open="ui.state.dialog === 'import'"
+            @close="ui.closeDialog()"
+        />
+        <ExportDialog
+            :open="ui.state.dialog === 'export'"
+            @close="ui.closeDialog()"
+        />
+        <ShortcutsDialog
+            :open="ui.state.dialog === 'shortcuts'"
+            @close="ui.closeDialog()"
+        />
 
         <!-- Drag overlay -->
         <Transition
@@ -212,8 +229,14 @@ function hasFiles(e: DragEvent): boolean {
                 <div
                     class="flex flex-col items-center rounded-2xl border border-dashed border-[var(--color-accent)] bg-[var(--color-surface-2)]/80 px-10 py-8 text-center backdrop-blur"
                 >
-                    <Icon name="upload" :size="22" class="mb-3 text-[var(--color-accent)]" />
-                    <div class="text-[14px] font-medium text-[var(--color-fg)]">Drop to load</div>
+                    <Icon
+                        name="upload"
+                        :size="22"
+                        class="mb-3 text-[var(--color-accent)]"
+                    />
+                    <div class="text-[14px] font-medium text-[var(--color-fg)]">
+                        Drop to load
+                    </div>
                     <div class="mt-1 text-[12px] text-[var(--color-fg-muted)]">
                         Release to import this JSON file
                     </div>

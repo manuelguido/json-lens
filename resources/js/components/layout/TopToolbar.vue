@@ -40,7 +40,7 @@ function copyAll() {
         class="flex h-11 shrink-0 items-center gap-3 border-b border-[var(--color-border)] bg-[var(--color-app-bg-2)] px-3"
     >
         <!-- Brand -->
-        <div class="flex items-center gap-2 pl-1 pr-2">
+        <div class="flex items-center gap-2 pr-2 pl-1">
             <div
                 class="grid h-6 w-6 place-items-center rounded-md bg-gradient-to-br from-[#7c9cff] to-[#5a78d8] text-[#0e1014]"
             >
@@ -61,11 +61,7 @@ function copyAll() {
 
         <!-- Document title -->
         <div class="flex min-w-0 items-center gap-1.5">
-            <Icon
-                name="file"
-                :size="13"
-                class="text-[var(--color-fg-faint)]"
-            />
+            <Icon name="file" :size="13" class="text-[var(--color-fg-faint)]" />
             <span
                 class="truncate text-[12px] text-[var(--color-fg-muted)]"
                 :title="docTitle"
@@ -115,27 +111,46 @@ function copyAll() {
                         : 'color: var(--color-fg-muted);'
                 "
             >
-                <Icon :name="ui.state.editMode ? 'unlock' : 'lock'" :size="12" />
+                <Icon
+                    :name="ui.state.editMode ? 'unlock' : 'lock'"
+                    :size="12"
+                />
                 {{ ui.state.editMode ? 'Edit mode' : 'View mode' }}
             </span>
         </button>
 
         <!-- Actions cluster -->
         <div class="flex items-center gap-1">
-            <Button variant="ghost" :title="`Import (${mod} O)`" @click="emit('open-import')">
+            <Button
+                variant="ghost"
+                :title="`Import (${mod} O)`"
+                @click="emit('open-import')"
+            >
                 <Icon name="upload" :size="13" /> Import
             </Button>
-            <Button variant="ghost" :title="`Search (${mod} F)`" @click="emit('open-search')">
+            <Button
+                variant="ghost"
+                :title="`Search (${mod} F)`"
+                @click="emit('open-search')"
+            >
                 <Icon name="search" :size="13" /> Search
                 <span
                     class="ml-1 rounded border border-[var(--color-border)] bg-[var(--color-app-bg)] px-1.5 py-px text-[10px] text-[var(--color-fg-faint)]"
                     >{{ mod }} F</span
                 >
             </Button>
-            <Button variant="ghost" title="Copy formatted JSON" @click="copyAll">
+            <Button
+                variant="ghost"
+                title="Copy formatted JSON"
+                @click="copyAll"
+            >
                 <Icon name="copy" :size="13" /> Copy
             </Button>
-            <Button variant="ghost" :title="`Export (${mod} S)`" @click="emit('open-export')">
+            <Button
+                variant="ghost"
+                :title="`Export (${mod} S)`"
+                @click="emit('open-export')"
+            >
                 <Icon name="download" :size="13" /> Export
             </Button>
 
@@ -160,7 +175,11 @@ function copyAll() {
 
             <div class="mx-1 h-5 w-px bg-[var(--color-border)]" />
 
-            <Button variant="ghost" title="Keyboard shortcuts" @click="emit('open-shortcuts')">
+            <Button
+                variant="ghost"
+                title="Keyboard shortcuts"
+                @click="emit('open-shortcuts')"
+            >
                 <Icon name="keyboard" :size="13" />
             </Button>
         </div>

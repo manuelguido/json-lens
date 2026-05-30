@@ -35,7 +35,13 @@ const crumbs = computed<Crumb[]>(() => {
     <div v-if="crumbs.length > 1" class="gv-breadcrumbs">
         <template v-for="(c, i) in crumbs" :key="c.id">
             <span v-if="i > 0" class="crumb-sep">›</span>
-            <button type="button" class="truncate" @click="emit('select', c.id)">{{ c.label }}</button>
+            <button
+                type="button"
+                class="truncate"
+                @click="emit('select', c.id)"
+            >
+                {{ c.label }}
+            </button>
         </template>
     </div>
 </template>

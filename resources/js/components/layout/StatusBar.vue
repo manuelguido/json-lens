@@ -15,8 +15,8 @@ const selectedPath = computed(() => {
     const id = store.selectedId.value;
 
     if (!id) {
-return null;
-}
+        return null;
+    }
 
     const r = store.rows.value.find((x) => x.id === id);
 
@@ -25,12 +25,12 @@ return null;
 
 const status = computed(() => {
     if (store.error.value) {
-return { kind: 'error' as const, text: store.error.value };
-}
+        return { kind: 'error' as const, text: store.error.value };
+    }
 
     if (store.document.value === null) {
-return { kind: 'empty' as const, text: 'No document loaded' };
-}
+        return { kind: 'empty' as const, text: 'No document loaded' };
+    }
 
     return { kind: 'ok' as const, text: 'Ready' };
 });
@@ -75,8 +75,14 @@ return { kind: 'empty' as const, text: 'No document loaded' };
         <div class="flex-1" />
 
         <!-- Mode pills -->
-        <span class="flex items-center gap-1" :title="`View: ${ui.state.viewMode}`">
-            <Icon :name="ui.state.viewMode === 'graph' ? 'graph' : 'tree'" :size="11" />
+        <span
+            class="flex items-center gap-1"
+            :title="`View: ${ui.state.viewMode}`"
+        >
+            <Icon
+                :name="ui.state.viewMode === 'graph' ? 'graph' : 'tree'"
+                :size="11"
+            />
             {{ ui.state.viewMode === 'graph' ? 'Graph' : 'Tree' }}
         </span>
         <span
@@ -89,7 +95,10 @@ return { kind: 'empty' as const, text: 'No document loaded' };
         <div class="h-3 w-px bg-[var(--color-border)]" />
 
         <!-- Path -->
-        <span v-if="selectedPath" class="truncate font-mono text-[var(--color-fg-muted)]">
+        <span
+            v-if="selectedPath"
+            class="truncate font-mono text-[var(--color-fg-muted)]"
+        >
             {{ selectedPath }}
         </span>
         <div class="h-3 w-px bg-[var(--color-border)]" />

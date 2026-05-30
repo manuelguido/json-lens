@@ -13,8 +13,8 @@ watch(
     () => props.open,
     (v) => {
         if (v) {
-nextTick(() => inputEl.value?.focus());
-}
+            nextTick(() => inputEl.value?.focus());
+        }
     },
 );
 
@@ -25,10 +25,10 @@ function onKey(e: KeyboardEvent) {
         e.preventDefault();
 
         if (e.shiftKey) {
-search.prev();
-} else {
-search.next();
-}
+            search.prev();
+        } else {
+            search.next();
+        }
     } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         search.next();
@@ -48,9 +48,13 @@ search.next();
     >
         <div
             v-if="open"
-            class="surface absolute right-3 top-3 z-30 flex w-[420px] items-center gap-2 rounded-lg border bg-[var(--color-surface-2)] px-2.5 py-2 shadow-2xl"
+            class="surface absolute top-3 right-3 z-30 flex w-[420px] items-center gap-2 rounded-lg border bg-[var(--color-surface-2)] px-2.5 py-2 shadow-2xl"
         >
-            <Icon name="search" :size="14" class="text-[var(--color-fg-faint)]" />
+            <Icon
+                name="search"
+                :size="14"
+                class="text-[var(--color-fg-faint)]"
+            />
             <input
                 ref="inputEl"
                 v-model="search.query.value"
@@ -60,10 +64,14 @@ search.next();
                 @keydown="onKey"
             />
             <span
-                class="rounded-sm bg-[var(--color-surface)] px-1.5 py-0.5 font-mono text-[11px] tabular-nums text-[var(--color-fg-muted)]"
+                class="rounded-sm bg-[var(--color-surface)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--color-fg-muted)] tabular-nums"
             >
                 <template v-if="search.query.value">
-                    {{ search.matches.value.length === 0 ? 0 : search.activeIndex.value + 1 }}
+                    {{
+                        search.matches.value.length === 0
+                            ? 0
+                            : search.activeIndex.value + 1
+                    }}
                     /
                     {{ search.matches.value.length }}
                 </template>

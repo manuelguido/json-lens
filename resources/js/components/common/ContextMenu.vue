@@ -17,15 +17,15 @@ watch(
     () => [ctx.state.open, ctx.state.x, ctx.state.y] as const,
     async ([open, x, y]) => {
         if (!open) {
-return;
-}
+            return;
+        }
 
         adjusted.value = { x, y };
         await new Promise((r) => requestAnimationFrame(r));
 
         if (!root.value) {
-return;
-}
+            return;
+        }
 
         const rect = root.value.getBoundingClientRect();
         const margin = 8;
@@ -46,20 +46,20 @@ return;
 
 function onDocClick(e: MouseEvent) {
     if (!ctx.state.open) {
-return;
-}
+        return;
+    }
 
     if (root.value && root.value.contains(e.target as Node)) {
-return;
-}
+        return;
+    }
 
     ctx.close();
 }
 
 function onKey(e: KeyboardEvent) {
     if (!ctx.state.open) {
-return;
-}
+        return;
+    }
 
     if (e.key === 'Escape') {
         e.preventDefault();
@@ -67,10 +67,14 @@ return;
     }
 }
 
-function activate(item: { disabled?: boolean; onClick?: () => void; separator?: boolean }) {
+function activate(item: {
+    disabled?: boolean;
+    onClick?: () => void;
+    separator?: boolean;
+}) {
     if (item.disabled || item.separator) {
-return;
-}
+        return;
+    }
 
     ctx.close();
     item.onClick?.();

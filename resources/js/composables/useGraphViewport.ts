@@ -18,12 +18,12 @@ export function useGraphViewport() {
 
     function clampZoom(z: number) {
         if (z < ZOOM_MIN) {
-return ZOOM_MIN;
-}
+            return ZOOM_MIN;
+        }
 
         if (z > ZOOM_MAX) {
-return ZOOM_MAX;
-}
+            return ZOOM_MAX;
+        }
 
         return z;
     }
@@ -38,8 +38,8 @@ return ZOOM_MAX;
         const next = clampZoom(zoom.value * factor);
 
         if (next === zoom.value) {
-return;
-}
+            return;
+        }
 
         // Keep the world point under the anchor stationary.
         const worldX = (anchorX - panX.value) / zoom.value;
@@ -54,7 +54,12 @@ return;
     }
 
     /** Center a world-space point in the viewport at current zoom. */
-    function centerOn(worldX: number, worldY: number, viewportW: number, viewportH: number) {
+    function centerOn(
+        worldX: number,
+        worldY: number,
+        viewportW: number,
+        viewportH: number,
+    ) {
         panX.value = viewportW / 2 - worldX * zoom.value;
         panY.value = viewportH / 2 - worldY * zoom.value;
     }
@@ -75,7 +80,11 @@ return;
         }
 
         const z = clampZoom(
-            Math.min((viewportW - padding * 2) / w, (viewportH - padding * 2) / h, 1),
+            Math.min(
+                (viewportW - padding * 2) / w,
+                (viewportH - padding * 2) / h,
+                1,
+            ),
         );
         zoom.value = z;
         const cx = (bounds.minX + bounds.maxX) / 2;
@@ -90,7 +99,17 @@ return;
         zoom.value = 1;
     }
 
-    return { panX, panY, zoom, panBy, zoomAt, setZoom, centerOn, fitToBounds, reset };
+    return {
+        panX,
+        panY,
+        zoom,
+        panBy,
+        zoomAt,
+        setZoom,
+        centerOn,
+        fitToBounds,
+        reset,
+    };
 }
 
 export const ZOOM_LIMITS = { min: ZOOM_MIN, max: ZOOM_MAX };

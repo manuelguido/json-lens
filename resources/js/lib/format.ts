@@ -1,7 +1,7 @@
 export function formatBytes(n: number): string {
     if (!Number.isFinite(n) || n <= 0) {
-return '0 B';
-}
+        return '0 B';
+    }
 
     const units = ['B', 'KB', 'MB', 'GB'];
     let i = 0;

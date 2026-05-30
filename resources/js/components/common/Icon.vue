@@ -20,7 +20,8 @@ const PATHS: Record<string, string> = {
 
     // file/io
     upload: '<path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/>',
-    download: '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
+    download:
+        '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
     file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
     paste: '<path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/>',
     sparkles:
@@ -38,7 +39,8 @@ const PATHS: Record<string, string> = {
 
     // structural
     'expand-all': '<path d="M4 6h16"/><path d="M7 12h10"/><path d="M4 18h16"/>',
-    'collapse-all': '<path d="M4 8l4-4 4 4"/><path d="M4 16l4 4 4-4"/><path d="M14 12h6"/>',
+    'collapse-all':
+        '<path d="M4 8l4-4 4 4"/><path d="M4 16l4 4 4-4"/><path d="M14 12h6"/>',
     braces: '<path d="M8 4a4 4 0 0 0-4 4v2a2 2 0 0 1-2 2 2 2 0 0 1 2 2v2a4 4 0 0 0 4 4"/><path d="M16 4a4 4 0 0 1 4 4v2a2 2 0 0 0 2 2 2 2 0 0 0-2 2v2a4 4 0 0 1-4 4"/>',
     brackets: '<path d="M8 4H4v16h4"/><path d="M16 4h4v16h-4"/>',
 
@@ -52,7 +54,8 @@ const PATHS: Record<string, string> = {
     folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
     layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17l9 5 9-5"/>',
     lens: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><circle cx="11" cy="11" r="3"/>',
-    keyboard: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h0M11 10h0M15 10h0M7 14h10"/>',
+    keyboard:
+        '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h0M11 10h0M15 10h0M7 14h10"/>',
     pin: '<path d="M12 2v6"/><path d="M9 8h6l1 6H8z"/><path d="M12 14v8"/>',
     dot: '<circle cx="12" cy="12" r="3"/>',
 
@@ -62,8 +65,10 @@ const PATHS: Record<string, string> = {
     eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
     lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
     unlock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7-2.7"/>',
-    'zoom-in': '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M11 8v6M8 11h6"/>',
-    'zoom-out': '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M8 11h6"/>',
+    'zoom-in':
+        '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M11 8v6M8 11h6"/>',
+    'zoom-out':
+        '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M8 11h6"/>',
     fit: '<path d="M4 9V5h4"/><path d="M16 5h4v4"/><path d="M20 15v4h-4"/><path d="M8 19H4v-4"/>',
     target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
     focus: '<path d="M4 7V4h3"/><path d="M17 4h3v3"/><path d="M20 17v3h-3"/><path d="M7 20H4v-3"/><circle cx="12" cy="12" r="3"/>',

@@ -66,11 +66,21 @@ const groups = [
             @click.self="emit('close')"
             @keydown.esc="emit('close')"
         >
-            <div class="surface w-[560px] max-w-[92vw] rounded-xl border bg-[var(--color-surface-2)] shadow-2xl">
-                <header class="flex items-center justify-between px-5 pt-4 pb-3">
+            <div
+                class="surface w-[560px] max-w-[92vw] rounded-xl border bg-[var(--color-surface-2)] shadow-2xl"
+            >
+                <header
+                    class="flex items-center justify-between px-5 pt-4 pb-3"
+                >
                     <div class="flex items-center gap-2">
-                        <Icon name="keyboard" :size="14" class="text-[var(--color-fg-muted)]" />
-                        <h2 class="text-[14px] font-semibold tracking-tight text-[var(--color-fg)]">
+                        <Icon
+                            name="keyboard"
+                            :size="14"
+                            class="text-[var(--color-fg-muted)]"
+                        />
+                        <h2
+                            class="text-[14px] font-semibold tracking-tight text-[var(--color-fg)]"
+                        >
                             Keyboard shortcuts
                         </h2>
                     </div>
@@ -95,13 +105,16 @@ const groups = [
                                 :key="item.label"
                                 class="flex items-center justify-between gap-3 text-[12px]"
                             >
-                                <span class="text-[var(--color-fg-muted)]">{{ item.label }}</span>
+                                <span class="text-[var(--color-fg-muted)]">{{
+                                    item.label
+                                }}</span>
                                 <span class="flex items-center gap-1">
                                     <kbd
                                         v-for="k in item.keys"
                                         :key="k"
                                         class="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 font-mono text-[10.5px] text-[var(--color-fg)]"
-                                    >{{ k }}</kbd>
+                                        >{{ k }}</kbd
+                                    >
                                 </span>
                             </li>
                         </ul>

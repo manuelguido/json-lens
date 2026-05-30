@@ -18,8 +18,8 @@ function push(text: string, kind: Toast['kind'] = 'info', ttl = 2200) {
             const i = state.items.findIndex((t) => t.id === id);
 
             if (i >= 0) {
-state.items.splice(i, 1);
-}
+                state.items.splice(i, 1);
+            }
         }, ttl);
     }
 }

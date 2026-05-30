@@ -35,24 +35,24 @@ const kindBadge = computed(() => {
     const k = props.node.kind;
 
     if (k === 'object') {
-return `obj · ${props.node.childCount}`;
-}
+        return `obj · ${props.node.childCount}`;
+    }
 
     if (k === 'array') {
-return `arr · ${props.node.childCount}`;
-}
+        return `arr · ${props.node.childCount}`;
+    }
 
     return k;
 });
 
 const keyLabelDisplay = computed(() => {
     if (props.node.keyLabel === null) {
-return 'root';
-}
+        return 'root';
+    }
 
     if (props.node.parentKind === 'array') {
-return `[${props.node.keyLabel}]`;
-}
+        return `[${props.node.keyLabel}]`;
+    }
 
     return props.node.keyLabel;
 });
@@ -66,10 +66,10 @@ function onDouble(e: MouseEvent) {
     e.stopPropagation();
 
     if (props.node.isContainer) {
-emit('toggle', props.node);
-} else if (props.editMode) {
-emit('edit', props.node);
-}
+        emit('toggle', props.node);
+    } else if (props.editMode) {
+        emit('edit', props.node);
+    }
 }
 
 function onContext(e: MouseEvent) {
@@ -102,11 +102,17 @@ function onChevron(e: MouseEvent) {
         @dblclick="onDouble"
         @contextmenu="onContext"
     >
-        <div class="flex h-full flex-col justify-center pl-3.5 pr-2">
+        <div class="flex h-full flex-col justify-center pr-2 pl-3.5">
             <div class="flex items-center gap-1.5 text-[11px] leading-none">
-                <span class="tok-meta uppercase tracking-wide" style="font-size: 9.5px">{{ kindBadge }}</span>
+                <span
+                    class="tok-meta tracking-wide uppercase"
+                    style="font-size: 9.5px"
+                    >{{ kindBadge }}</span
+                >
                 <span v-if="node.kind === 'array'" class="tok-bracket">[</span>
-                <span v-else-if="node.kind === 'object'" class="tok-bracket">{</span>
+                <span v-else-if="node.kind === 'object'" class="tok-bracket"
+                    >{</span
+                >
             </div>
             <div class="mt-1 flex items-center gap-1.5">
                 <button
@@ -116,15 +122,19 @@ function onChevron(e: MouseEvent) {
                     :aria-label="node.expanded ? 'Collapse' : 'Expand'"
                     @click="onChevron"
                 >
-                    <Icon :name="node.expanded ? 'chevron-down' : 'chevron-right'" :size="11" />
+                    <Icon
+                        :name="node.expanded ? 'chevron-down' : 'chevron-right'"
+                        :size="11"
+                    />
                 </button>
                 <span
-                    class="truncate text-[13px] font-medium tok-key"
+                    class="tok-key truncate text-[13px] font-medium"
                     :title="String(keyLabelDisplay)"
-                >{{ keyLabelDisplay }}</span>
+                    >{{ keyLabelDisplay }}</span
+                >
                 <span
                     v-if="!node.isContainer"
-                    class="truncate text-[12px] font-mono"
+                    class="truncate font-mono text-[12px]"
                     :class="{
                         'tok-string': node.kind === 'string',
                         'tok-number': node.kind === 'number',
@@ -132,12 +142,14 @@ function onChevron(e: MouseEvent) {
                         'tok-null': node.kind === 'null',
                     }"
                     :title="node.preview"
-                >{{ node.preview }}</span>
+                    >{{ node.preview }}</span
+                >
                 <span
                     v-else
-                    class="truncate text-[11px] tok-meta"
+                    class="tok-meta truncate text-[11px]"
                     :title="node.preview"
-                >{{ node.preview }}</span>
+                    >{{ node.preview }}</span
+                >
             </div>
         </div>
 

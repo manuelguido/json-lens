@@ -49,7 +49,11 @@ const layout = computed(() => {
     const doc = store.document.value;
 
     if (doc === null) {
-        return { nodes: [], edges: [], bounds: { minX: 0, minY: 0, maxX: 0, maxY: 0 } };
+        return {
+            nodes: [],
+            edges: [],
+            bounds: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
+        };
     }
 
     let rootValue: JsonValue = doc;
@@ -78,8 +82,8 @@ function findNodeIdToPath(
     doc: JsonValue,
 ): ReadonlyArray<string | number> | null {
     if (id === '$') {
-return [];
-}
+        return [];
+    }
 
     let result: ReadonlyArray<string | number> | null = null;
 
@@ -93,16 +97,16 @@ return [];
         if (Array.isArray(v)) {
             for (let i = 0; i < v.length; i++) {
                 if (walk(v[i], [...p, i])) {
-return true;
-}
+                    return true;
+                }
             }
         } else if (v !== null && typeof v === 'object') {
             const obj = v as Record<string, JsonValue>;
 
             for (const k of Object.keys(obj)) {
                 if (walk(obj[k], [...p, k])) {
-return true;
-}
+                    return true;
+                }
             }
         }
 
@@ -122,8 +126,8 @@ const visibleNodes = computed(() => {
     const { w, h } = viewportSize.value;
 
     if (w === 0 || h === 0) {
-return layout.value.nodes;
-}
+        return layout.value.nodes;
+    }
 
     // Convert viewport (in screen px) to world AABB.
     const z = viewport.zoom.value;
@@ -151,8 +155,8 @@ const selectedPath = computed(() => {
     const id = store.selectedId.value;
 
     if (!id || store.document.value === null) {
-return [];
-}
+        return [];
+    }
 
     return findNodeIdToPath(id, store.document.value) ?? [];
 });
@@ -171,15 +175,19 @@ function onWheel(e: WheelEvent) {
 
 function onPointerDown(e: PointerEvent) {
     if (e.button !== 0) {
-return;
-}
+        return;
+    }
 
     // Skip if we clicked on a node (its own handler will fire).
     const target = e.target as HTMLElement;
 
-    if (target.closest('.gv-node') || target.closest('.gv-toolbar') || target.closest('.gv-minimap')) {
-return;
-}
+    if (
+        target.closest('.gv-node') ||
+        target.closest('.gv-toolbar') ||
+        target.closest('.gv-minimap')
+    ) {
+        return;
+    }
 
     isPanning.value = true;
     panStart = {
@@ -195,8 +203,8 @@ return;
 
 function onPointerMove(e: PointerEvent) {
     if (!isPanning.value || !panStart) {
-return;
-}
+        return;
+    }
 
     viewport.panX.value = panStart.px + (e.clientX - panStart.x);
     viewport.panY.value = panStart.py + (e.clientY - panStart.y);
@@ -204,8 +212,8 @@ return;
 
 function onPointerUp(e: PointerEvent) {
     if (!isPanning.value) {
-return;
-}
+        return;
+    }
 
     isPanning.value = false;
     panStart = null;
@@ -216,12 +224,29 @@ function onCanvasContext(e: MouseEvent) {
     e.preventDefault();
     ctx.open(e.clientX, e.clientY, [
         { label: 'Fit to screen', icon: 'fit', kbd: 'F', onClick: doFit },
-        { label: 'Reset zoom', icon: 'target', kbd: '0', onClick: () => viewport.reset() },
+        {
+            label: 'Reset zoom',
+            icon: 'target',
+            kbd: '0',
+            onClick: () => viewport.reset(),
+        },
         { separator: true, label: '' },
-        { label: 'Expand all', icon: 'expand-all', onClick: () => store.expandAll() },
-        { label: 'Collapse all', icon: 'collapse-all', onClick: () => store.collapseAll() },
+        {
+            label: 'Expand all',
+            icon: 'expand-all',
+            onClick: () => store.expandAll(),
+        },
+        {
+            label: 'Collapse all',
+            icon: 'collapse-all',
+            onClick: () => store.collapseAll(),
+        },
         ui.state.focusedRootId
-            ? { label: 'Clear focus', icon: 'arrow-left', onClick: () => ui.setFocusedRoot(null) }
+            ? {
+                  label: 'Clear focus',
+                  icon: 'arrow-left',
+                  onClick: () => ui.setFocusedRoot(null),
+              }
             : { label: 'Clear focus', icon: 'arrow-left', disabled: true },
     ]);
 }
@@ -235,8 +260,8 @@ function onSelect(node: GraphNodeT) {
 
 function onToggle(node: GraphNodeT) {
     if (!node.isContainer) {
-return;
-}
+        return;
+    }
 
     store.toggleExpand(node.id);
 }
@@ -248,7 +273,11 @@ function onContext(node: GraphNodeT, x: number, y: number) {
     ctx.open(x, y, [
         {
             label: isContainer && node.expanded ? 'Collapse' : 'Expand',
-            icon: isContainer ? (node.expanded ? 'collapse-all' : 'expand-all') : 'dot',
+            icon: isContainer
+                ? node.expanded
+                    ? 'collapse-all'
+                    : 'expand-all'
+                : 'dot',
             disabled: !isContainer,
             onClick: () => store.toggleExpand(node.id),
         },
@@ -259,7 +288,11 @@ function onContext(node: GraphNodeT, x: number, y: number) {
             onClick: () => ui.setFocusedRoot(node.id),
         },
         { separator: true, label: '' },
-        { label: 'Copy path', icon: 'copy', onClick: () => copyText(formatPath(node.path)) },
+        {
+            label: 'Copy path',
+            icon: 'copy',
+            onClick: () => copyText(formatPath(node.path)),
+        },
         { label: 'Copy value', icon: 'copy', onClick: () => copyValue(node) },
         { separator: true, label: '' },
         {
@@ -293,14 +326,17 @@ function onContext(node: GraphNodeT, x: number, y: number) {
 
 function onEdit(node: GraphNodeT) {
     if (node.isContainer) {
-return;
-}
+        return;
+    }
 
-    const next = window.prompt('New value (JSON literal):', String(node.preview));
+    const next = window.prompt(
+        'New value (JSON literal):',
+        String(node.preview),
+    );
 
     if (next === null) {
-return;
-}
+        return;
+    }
 
     store.updateValue(node.path, parseEditedValue(next));
     toasts.success('Value updated');
@@ -308,37 +344,37 @@ return;
 
 function onDelete(node: GraphNodeT) {
     if (node.path.length === 0) {
-return;
-}
+        return;
+    }
 
     store.deleteNode(node.path);
 }
 
 function onAddChild(node: GraphNodeT) {
     if (!node.isContainer) {
-return;
-}
+        return;
+    }
 
     if (node.kind === 'array') {
         const raw = window.prompt('New item value (JSON literal):', '""');
 
         if (raw === null) {
-return;
-}
+            return;
+        }
 
         store.appendItem(node.path, parseEditedValue(raw));
     } else {
         const key = window.prompt('New key:');
 
         if (!key) {
-return;
-}
+            return;
+        }
 
         const raw = window.prompt('New value (JSON literal):', '""');
 
         if (raw === null) {
-return;
-}
+            return;
+        }
 
         store.addProperty(node.path, key, parseEditedValue(raw));
     }
@@ -355,8 +391,8 @@ function copyText(text: string) {
 
 function copyValue(node: GraphNodeT) {
     if (store.document.value === null) {
-return;
-}
+        return;
+    }
 
     const v = getAtPath(store.document.value, node.path);
 
@@ -369,16 +405,12 @@ return;
 
 function formatPath(path: ReadonlyArray<string | number>): string {
     if (path.length === 0) {
-return '$';
-}
+        return '$';
+    }
 
     return (
-        '$'
-        + path
-            .map((s) =>
-                typeof s === 'number' ? `[${s}]` : `.${s}`,
-            )
-            .join('')
+        '$' +
+        path.map((s) => (typeof s === 'number' ? `[${s}]` : `.${s}`)).join('')
     );
 }
 
@@ -388,8 +420,8 @@ function doFit() {
     const { w, h } = viewportSize.value;
 
     if (w > 0 && h > 0) {
-viewport.fitToBounds(layout.value.bounds, w, h);
-}
+        viewport.fitToBounds(layout.value.bounds, w, h);
+    }
 }
 
 function zoomIn() {
@@ -408,21 +440,21 @@ watch(
     () => store.selectedId.value,
     async (id) => {
         if (!id) {
-return;
-}
+            return;
+        }
 
         await new Promise((r) => requestAnimationFrame(r));
         const node = layout.value.nodes.find((n) => n.id === id);
 
         if (!node) {
-return;
-}
+            return;
+        }
 
         const { w, h } = viewportSize.value;
 
         if (w === 0 || h === 0) {
-return;
-}
+            return;
+        }
 
         // Only re-center if the node is outside the visible area.
         const screenX = node.x * viewport.zoom.value + viewport.panX.value;
@@ -430,10 +462,10 @@ return;
         const margin = 80;
 
         if (
-            screenX < margin
-            || screenX > w - margin
-            || screenY < margin
-            || screenY > h - margin
+            screenX < margin ||
+            screenX > w - margin ||
+            screenY < margin ||
+            screenY > h - margin
         ) {
             viewport.centerOn(node.x, node.y, w, h);
         }
@@ -444,16 +476,16 @@ watch(
     () => search.activeMatch.value,
     async (m) => {
         if (!m) {
-return;
-}
+            return;
+        }
 
         store.expandAncestors(m.path);
         await new Promise((r) => requestAnimationFrame(r));
         const node = layout.value.nodes.find((n) => n.id === m.rowId);
 
         if (!node) {
-return;
-}
+            return;
+        }
 
         const { w, h } = viewportSize.value;
         viewport.centerOn(node.x, node.y, w, h);
@@ -464,28 +496,32 @@ return;
 
 function moveToParent() {
     if (!store.selectedId.value) {
-return;
-}
+        return;
+    }
 
-    const node = layout.value.nodes.find((n) => n.id === store.selectedId.value);
+    const node = layout.value.nodes.find(
+        (n) => n.id === store.selectedId.value,
+    );
 
     if (!node || !node.parentId) {
-return;
-}
+        return;
+    }
 
     store.select(node.parentId);
 }
 
 function moveToFirstChild() {
     if (!store.selectedId.value) {
-return;
-}
+        return;
+    }
 
-    const node = layout.value.nodes.find((n) => n.id === store.selectedId.value);
+    const node = layout.value.nodes.find(
+        (n) => n.id === store.selectedId.value,
+    );
 
     if (!node) {
-return;
-}
+        return;
+    }
 
     if (node.isContainer && !node.expanded) {
         store.toggleExpand(node.id);
@@ -496,20 +532,22 @@ return;
     const child = layout.value.nodes.find((n) => n.parentId === node.id);
 
     if (child) {
-store.select(child.id);
-}
+        store.select(child.id);
+    }
 }
 
 function moveToSibling(direction: 1 | -1) {
     if (!store.selectedId.value) {
-return;
-}
+        return;
+    }
 
-    const node = layout.value.nodes.find((n) => n.id === store.selectedId.value);
+    const node = layout.value.nodes.find(
+        (n) => n.id === store.selectedId.value,
+    );
 
     if (!node) {
-return;
-}
+        return;
+    }
 
     const siblings = layout.value.nodes
         .filter((n) => n.parentId === node.parentId)
@@ -518,8 +556,8 @@ return;
     const next = siblings[idx + direction];
 
     if (next) {
-store.select(next.id);
-}
+        store.select(next.id);
+    }
 }
 
 useHotkeys([
@@ -531,14 +569,16 @@ useHotkeys([
         keys: 'enter',
         handler: () => {
             if (!store.selectedId.value) {
-return;
-}
+                return;
+            }
 
-            const node = layout.value.nodes.find((n) => n.id === store.selectedId.value);
+            const node = layout.value.nodes.find(
+                (n) => n.id === store.selectedId.value,
+            );
 
             if (node?.isContainer) {
-store.toggleExpand(node.id);
-}
+                store.toggleExpand(node.id);
+            }
         },
     },
     { keys: 'f', handler: () => doFit() },
@@ -550,14 +590,16 @@ store.toggleExpand(node.id);
         keys: 'delete',
         handler: () => {
             if (!ui.state.editMode || !store.selectedId.value) {
-return;
-}
+                return;
+            }
 
-            const node = layout.value.nodes.find((n) => n.id === store.selectedId.value);
+            const node = layout.value.nodes.find(
+                (n) => n.id === store.selectedId.value,
+            );
 
             if (node && node.path.length > 0) {
-store.deleteNode(node.path);
-}
+                store.deleteNode(node.path);
+            }
         },
     },
 ]);
@@ -566,19 +608,24 @@ store.deleteNode(node.path);
 
 onMounted(() => {
     if (!canvas.value) {
-return;
-}
+        return;
+    }
 
     resizeObserver = new ResizeObserver((entries) => {
         const r = entries[0]?.contentRect;
 
         if (!r) {
-return;
-}
+            return;
+        }
 
         viewportSize.value = { w: r.width, h: r.height };
 
-        if (!didInitialFit && r.width > 0 && r.height > 0 && layout.value.nodes.length > 0) {
+        if (
+            !didInitialFit &&
+            r.width > 0 &&
+            r.height > 0 &&
+            layout.value.nodes.length > 0
+        ) {
             doFit();
             didInitialFit = true;
         }
@@ -668,9 +715,9 @@ function clearFocus() {
                     :key="e.id"
                     :d="edgePath(e)"
                     :data-active="
-                        e.fromId === store.selectedId.value
-                            || e.toId === store.selectedId.value
-                            || undefined
+                        e.fromId === store.selectedId.value ||
+                        e.toId === store.selectedId.value ||
+                        undefined
                     "
                 />
             </svg>
@@ -722,7 +769,9 @@ function clearFocus() {
             <button type="button" title="Zoom out (-)" @click="zoomOut">
                 <Icon name="zoom-out" :size="14" />
             </button>
-            <span class="px-1 text-[11px] text-[var(--color-fg-muted)]">{{ Math.round(viewport.zoom.value * 100) }}%</span>
+            <span class="px-1 text-[11px] text-[var(--color-fg-muted)]"
+                >{{ Math.round(viewport.zoom.value * 100) }}%</span
+            >
             <button type="button" title="Zoom in (+)" @click="zoomIn">
                 <Icon name="zoom-in" :size="14" />
             </button>

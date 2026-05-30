@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue';
 import Icon from '@/components/common/Icon.vue';
-import {
-    highlightSegments,
-    useJsonSearch,
-} from '@/composables/useJsonSearch';
+import { highlightSegments, useJsonSearch } from '@/composables/useJsonSearch';
 import { useJsonStore } from '@/composables/useJsonStore';
 import { parseEditedValue, previewOf } from '@/lib/jsonPath';
 import type { TreeRow } from '@/lib/types';
@@ -28,12 +25,12 @@ const indent = computed(() => `${props.row.depth * 14 + 8}px`);
 
 const keyText = computed(() => {
     if (props.row.parentKind === 'root') {
-return null;
-}
+        return null;
+    }
 
     if (props.row.parentKind === 'array') {
-return props.row.keyLabel;
-}
+        return props.row.keyLabel;
+    }
 
     return props.row.keyLabel;
 });
@@ -48,8 +45,8 @@ function onClick(e: MouseEvent) {
 
 function startEdit() {
     if (props.row.isContainer) {
-return;
-}
+        return;
+    }
 
     editing.value = true;
     const v = props.row.rawValue;
@@ -60,8 +57,8 @@ return;
 
 function commitEdit() {
     if (!editing.value) {
-return;
-}
+        return;
+    }
 
     const newValue = parseEditedValue(editBuffer.value);
     store.updateValue(props.row.path, newValue);
@@ -84,15 +81,15 @@ function onValueKeydown(e: KeyboardEvent) {
 
 function onKeyEdit() {
     if (props.row.parentKind !== 'object') {
-return;
-}
+        return;
+    }
 
     const oldKey = props.row.keyLabel ?? '';
     const newKey = window.prompt('Rename key', oldKey);
 
     if (newKey === null || newKey === oldKey || newKey === '') {
-return;
-}
+        return;
+    }
 
     const parentPath = props.row.path.slice(0, -1);
     store.renameNodeKey(parentPath, oldKey, newKey);
@@ -115,20 +112,16 @@ const tokenClass = computed(() => {
 
 function valueText(): string {
     if (props.row.isContainer) {
-return '';
-}
+        return '';
+    }
 
-    return previewOf(
-        props.row.rawValue ?? null,
-        props.row.kind,
-        160,
-    );
+    return previewOf(props.row.rawValue ?? null, props.row.kind, 160);
 }
 
 const keySegments = computed(() => {
     if (!keyText.value) {
-return [];
-}
+        return [];
+    }
 
     if (search.debounced.value) {
         return highlightSegments(keyText.value, search.debounced.value);
@@ -139,8 +132,8 @@ return [];
 
 const valueSegments = computed(() => {
     if (props.row.isContainer) {
-return [];
-}
+        return [];
+    }
 
     const text = valueText();
 
@@ -162,10 +155,7 @@ return [];
         @dblclick.stop="startEdit"
     >
         <!-- Indent + chevron column -->
-        <span
-            class="flex items-center"
-            :style="{ paddingLeft: indent }"
-        >
+        <span class="flex items-center" :style="{ paddingLeft: indent }">
             <span class="mr-1 inline-flex h-4 w-4 items-center justify-center">
                 <button
                     v-if="row.isContainer"
@@ -202,7 +192,11 @@ return [];
                     <mark
                         v-if="seg.match"
                         class="jl-match"
-                        :data-active="isActiveMatch && search.activeMatch.value?.field === 'key' || undefined"
+                        :data-active="
+                            (isActiveMatch &&
+                                search.activeMatch.value?.field === 'key') ||
+                            undefined
+                        "
                         >{{ seg.text }}</mark
                     >
                     <span v-else>{{ seg.text }}</span>
@@ -231,10 +225,7 @@ return [];
                           : 'keys'
                 }}
             </span>
-            <span
-                v-if="!row.expanded"
-                class="tok-bracket font-mono"
-            >
+            <span v-if="!row.expanded" class="tok-bracket font-mono">
                 {{ row.kind === 'array' ? ']' : '}' }}
             </span>
         </template>
@@ -245,7 +236,7 @@ return [];
                 v-if="editing"
                 ref="inputEl"
                 v-model="editBuffer"
-                class="font-mono text-[12.5px] min-w-0 flex-1 rounded border border-[var(--color-accent)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[var(--color-fg)] outline-none"
+                class="min-w-0 flex-1 rounded border border-[var(--color-accent)] bg-[var(--color-surface)] px-1.5 py-0.5 font-mono text-[12.5px] text-[var(--color-fg)] outline-none"
                 spellcheck="false"
                 @keydown="onValueKeydown"
                 @blur="commitEdit"
@@ -260,7 +251,11 @@ return [];
                     <mark
                         v-if="seg.match"
                         class="jl-match"
-                        :data-active="isActiveMatch && search.activeMatch.value?.field === 'value' || undefined"
+                        :data-active="
+                            (isActiveMatch &&
+                                search.activeMatch.value?.field === 'value') ||
+                            undefined
+                        "
                         >{{ seg.text }}</mark
                     >
                     <span v-else>{{ seg.text }}</span>
@@ -269,7 +264,9 @@ return [];
         </template>
 
         <!-- Trailing meta on hover -->
-        <span class="ml-auto flex items-center gap-1 opacity-0 transition group-hover:opacity-100">
+        <span
+            class="ml-auto flex items-center gap-1 opacity-0 transition group-hover:opacity-100"
+        >
             <button
                 v-if="!row.isContainer && !editing"
                 type="button"

@@ -6,7 +6,14 @@
  * only the rows currently in the viewport (plus a buffer above/below). This
  * keeps the DOM small and scrolling smooth even for very large documents.
  */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import {
+    computed,
+    nextTick,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    watch,
+} from 'vue';
 import EmptyState from '@/components/layout/EmptyState.vue';
 import { useHotkeys } from '@/composables/useHotkeys';
 import { useJsonSearch } from '@/composables/useJsonSearch';
@@ -48,8 +55,8 @@ function onScroll(e: Event) {
 
 function measure() {
     if (!rootEl.value) {
-return;
-}
+        return;
+    }
 
     viewportH.value = rootEl.value.clientHeight;
 }
@@ -75,8 +82,8 @@ function scrollRowIntoView(rowId: string) {
     const idx = store.rows.value.findIndex((r) => r.id === rowId);
 
     if (idx < 0 || !rootEl.value) {
-return;
-}
+        return;
+    }
 
     const top = idx * ROW_HEIGHT;
     const bottom = top + ROW_HEIGHT;
@@ -98,8 +105,8 @@ watch(
     () => search.activeMatch.value,
     async (m) => {
         if (!m) {
-return;
-}
+            return;
+        }
 
         store.expandAncestors(m.path);
         store.select(m.rowId);
@@ -112,17 +119,20 @@ return;
 
 function moveSelection(delta: number) {
     if (total.value === 0) {
-return;
-}
+        return;
+    }
 
     const cur = store.selectedId.value;
     const idx = cur ? store.rows.value.findIndex((r) => r.id === cur) : -1;
-    const next = Math.max(0, Math.min(total.value - 1, (idx < 0 ? 0 : idx) + delta));
+    const next = Math.max(
+        0,
+        Math.min(total.value - 1, (idx < 0 ? 0 : idx) + delta),
+    );
     const row = store.rows.value[next];
 
     if (!row) {
-return;
-}
+        return;
+    }
 
     store.select(row.id);
     nextTick(() => scrollRowIntoView(row.id));
@@ -143,16 +153,16 @@ useHotkeys([
             const id = store.selectedId.value;
 
             if (!id) {
-return;
-}
+                return;
+            }
 
             const row = store.rows.value.find((r) => r.id === id);
 
             if (row?.isContainer && !row.expanded) {
-store.toggleExpand(id);
-} else {
-moveSelection(1);
-}
+                store.toggleExpand(id);
+            } else {
+                moveSelection(1);
+            }
         },
     },
     {
@@ -161,8 +171,8 @@ moveSelection(1);
             const id = store.selectedId.value;
 
             if (!id) {
-return;
-}
+                return;
+            }
 
             const row = store.rows.value.find((r) => r.id === id);
 
@@ -182,14 +192,14 @@ return;
             const id = store.selectedId.value;
 
             if (!id) {
-return;
-}
+                return;
+            }
 
             const row = store.rows.value.find((r) => r.id === id);
 
             if (row?.isContainer) {
-store.toggleExpand(id);
-}
+                store.toggleExpand(id);
+            }
         },
     },
     {
@@ -198,14 +208,14 @@ store.toggleExpand(id);
             const id = store.selectedId.value;
 
             if (!id) {
-return;
-}
+                return;
+            }
 
             const row = store.rows.value.find((r) => r.id === id);
 
             if (row && row.path.length > 0) {
-store.deleteNode(row.path);
-}
+                store.deleteNode(row.path);
+            }
         },
     },
     {
@@ -214,14 +224,14 @@ store.deleteNode(row.path);
             const id = store.selectedId.value;
 
             if (!id) {
-return;
-}
+                return;
+            }
 
             const row = store.rows.value.find((r) => r.id === id);
 
             if (row && row.path.length > 0) {
-store.deleteNode(row.path);
-}
+                store.deleteNode(row.path);
+            }
         },
     },
 ]);
@@ -241,7 +251,7 @@ store.deleteNode(row.path);
                 :style="{ height: totalHeight + 'px' }"
             >
                 <div
-                    class="absolute left-0 right-0 top-0 will-change-transform"
+                    class="absolute top-0 right-0 left-0 will-change-transform"
                     :style="{ transform: `translateY(${offsetY}px)` }"
                 >
                     <JsonRow

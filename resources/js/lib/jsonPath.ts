@@ -2,22 +2,22 @@ import type { JsonPath, JsonValue, JsonValueKind } from './types';
 
 export function kindOf(v: unknown): JsonValueKind {
     if (v === null) {
-return 'null';
-}
+        return 'null';
+    }
 
     if (Array.isArray(v)) {
-return 'array';
-}
+        return 'array';
+    }
 
     const t = typeof v;
 
     if (t === 'string' || t === 'number' || t === 'boolean') {
-return t;
-}
+        return t;
+    }
 
     if (t === 'object') {
-return 'object';
-}
+        return 'object';
+    }
 
     return 'null';
 }
@@ -29,8 +29,8 @@ export function isContainerKind(k: JsonValueKind): boolean {
 /** Encode a path to a stable, unique row id. */
 export function pathToId(path: JsonPath): string {
     if (path.length === 0) {
-return '$';
-}
+        return '$';
+    }
 
     return (
         '$' +
@@ -47,20 +47,20 @@ return '$';
 /** Render a JSONPath-ish string for display in the inspector. */
 export function pathToDisplay(path: JsonPath): string {
     if (path.length === 0) {
-return '$';
-}
+        return '$';
+    }
 
     return (
         '$' +
         path
             .map((seg) => {
                 if (typeof seg === 'number') {
-return `[${seg}]`;
-}
+                    return `[${seg}]`;
+                }
 
                 if (/^[A-Za-z_$][\w$]*$/.test(seg)) {
-return `.${seg}`;
-}
+                    return `.${seg}`;
+                }
 
                 return `[${JSON.stringify(seg)}]`;
             })
@@ -69,24 +69,27 @@ return `.${seg}`;
 }
 
 /** Read a value by path. Returns undefined if path is invalid. */
-export function getAtPath(root: JsonValue, path: JsonPath): JsonValue | undefined {
+export function getAtPath(
+    root: JsonValue,
+    path: JsonPath,
+): JsonValue | undefined {
     let cur: JsonValue | undefined = root;
 
     for (const seg of path) {
         if (cur === null || cur === undefined) {
-return undefined;
-}
+            return undefined;
+        }
 
         if (typeof seg === 'number') {
             if (!Array.isArray(cur)) {
-return undefined;
-}
+                return undefined;
+            }
 
             cur = cur[seg];
         } else {
             if (typeof cur !== 'object' || Array.isArray(cur)) {
-return undefined;
-}
+                return undefined;
+            }
 
             cur = (cur as Record<string, JsonValue>)[seg];
         }
@@ -102,8 +105,8 @@ export function setAtPath(
     value: JsonValue,
 ): JsonValue {
     if (path.length === 0) {
-return value;
-}
+        return value;
+    }
 
     return setRecursive(root, path, 0, value);
 }
@@ -115,8 +118,8 @@ function setRecursive(
     value: JsonValue,
 ): JsonValue {
     if (i === path.length) {
-return value;
-}
+        return value;
+    }
 
     const seg = path[i];
 
@@ -139,13 +142,17 @@ return value;
 /** Immutably remove a value at a path. */
 export function deleteAtPath(root: JsonValue, path: JsonPath): JsonValue {
     if (path.length === 0) {
-return null;
-}
+        return null;
+    }
 
     return deleteRecursive(root, path, 0);
 }
 
-function deleteRecursive(node: JsonValue, path: JsonPath, i: number): JsonValue {
+function deleteRecursive(
+    node: JsonValue,
+    path: JsonPath,
+    i: number,
+): JsonValue {
     const seg = path[i];
 
     if (i === path.length - 1) {
@@ -156,7 +163,12 @@ function deleteRecursive(node: JsonValue, path: JsonPath, i: number): JsonValue 
             return arr;
         }
 
-        if (typeof seg === 'string' && node && typeof node === 'object' && !Array.isArray(node)) {
+        if (
+            typeof seg === 'string' &&
+            node &&
+            typeof node === 'object' &&
+            !Array.isArray(node)
+        ) {
             const obj = { ...(node as Record<string, JsonValue>) };
             delete obj[seg];
 
@@ -173,7 +185,12 @@ function deleteRecursive(node: JsonValue, path: JsonPath, i: number): JsonValue 
         return arr;
     }
 
-    if (typeof seg === 'string' && node && typeof node === 'object' && !Array.isArray(node)) {
+    if (
+        typeof seg === 'string' &&
+        node &&
+        typeof node === 'object' &&
+        !Array.isArray(node)
+    ) {
         const obj = { ...(node as Record<string, JsonValue>) };
         obj[seg] = deleteRecursive(obj[seg], path, i + 1);
 
@@ -191,14 +208,14 @@ export function renameKey(
     newKey: string,
 ): JsonValue {
     if (oldKey === newKey) {
-return root;
-}
+        return root;
+    }
 
     const parent = getAtPath(root, parentPath);
 
     if (!parent || typeof parent !== 'object' || Array.isArray(parent)) {
-return root;
-}
+        return root;
+    }
 
     // Preserve insertion order: rebuild the object swapping the key in place.
     const next: Record<string, JsonValue> = {};
@@ -211,13 +228,17 @@ return root;
 }
 
 /** Build a one-line preview for any value. */
-export function previewOf(value: JsonValue, kind: JsonValueKind, max = 60): string {
+export function previewOf(
+    value: JsonValue,
+    kind: JsonValueKind,
+    max = 60,
+): string {
     if (kind === 'object') {
         const keys = Object.keys(value as Record<string, JsonValue>);
 
         if (keys.length === 0) {
-return '{ }';
-}
+            return '{ }';
+        }
 
         return `{ ${keys.length} ${keys.length === 1 ? 'key' : 'keys'} }`;
     }
@@ -229,8 +250,8 @@ return '{ }';
     }
 
     if (kind === 'null') {
-return 'null';
-}
+        return 'null';
+    }
 
     if (kind === 'string') {
         const s = value as string;
@@ -250,27 +271,27 @@ export function parseEditedValue(raw: string): JsonValue {
     const trimmed = raw.trim();
 
     if (trimmed === '') {
-return '';
-}
+        return '';
+    }
 
     if (trimmed === 'null') {
-return null;
-}
+        return null;
+    }
 
     if (trimmed === 'true') {
-return true;
-}
+        return true;
+    }
 
     if (trimmed === 'false') {
-return false;
-}
+        return false;
+    }
 
     if (/^-?\d+(\.\d+)?([eE][+-]?\d+)?$/.test(trimmed)) {
         const n = Number(trimmed);
 
         if (Number.isFinite(n)) {
-return n;
-}
+            return n;
+        }
     }
 
     if (

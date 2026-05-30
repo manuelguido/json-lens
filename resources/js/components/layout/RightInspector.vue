@@ -17,20 +17,20 @@ const selectedRow = computed(() => {
     const id = store.selectedId.value;
 
     if (!id) {
-return null;
-}
+        return null;
+    }
 
     return store.rows.value.find((r) => r.id === id) ?? null;
 });
 
 const value = computed(() => {
     if (!selectedRow.value) {
-return undefined;
-}
+        return undefined;
+    }
 
     if (store.document.value === null) {
-return undefined;
-}
+        return undefined;
+    }
 
     return getAtPath(store.document.value, selectedRow.value.path);
 });
@@ -45,28 +45,28 @@ const pathStr = computed(() =>
 
 const valueLength = computed<string | null>(() => {
     if (!selectedRow.value) {
-return null;
-}
+        return null;
+    }
 
     if (selectedRow.value.kind === 'string') {
-return `${(selectedRow.value.rawValue as string).length} chars`;
-}
+        return `${(selectedRow.value.rawValue as string).length} chars`;
+    }
 
     if (selectedRow.value.kind === 'array') {
-return `${selectedRow.value.childCount} items`;
-}
+        return `${selectedRow.value.childCount} items`;
+    }
 
     if (selectedRow.value.kind === 'object') {
-return `${selectedRow.value.childCount} keys`;
-}
+        return `${selectedRow.value.childCount} keys`;
+    }
 
     return null;
 });
 
 const valueBytes = computed<string | null>(() => {
     if (value.value === undefined) {
-return null;
-}
+        return null;
+    }
 
     try {
         return formatBytes(
@@ -79,12 +79,12 @@ return null;
 
 const arrayIndex = computed<number | null>(() => {
     if (!selectedRow.value) {
-return null;
-}
+        return null;
+    }
 
     if (selectedRow.value.parentKind !== 'array') {
-return null;
-}
+        return null;
+    }
 
     const last = selectedRow.value.path[selectedRow.value.path.length - 1];
 
@@ -100,8 +100,8 @@ function copyPath() {
 
 function copyValue() {
     if (value.value === undefined) {
-return;
-}
+        return;
+    }
 
     const text =
         typeof value.value === 'string'
@@ -115,12 +115,12 @@ return;
 
 function deleteSelected() {
     if (!selectedRow.value) {
-return;
-}
+        return;
+    }
 
     if (selectedRow.value.path.length === 0) {
-return;
-}
+        return;
+    }
 
     store.deleteNode(selectedRow.value.path);
     toasts.info('Node deleted');
@@ -128,8 +128,8 @@ return;
 
 function duplicateSelected() {
     if (!selectedRow.value || selectedRow.value.path.length === 0) {
-return;
-}
+        return;
+    }
 
     store.duplicateNode(selectedRow.value.path);
     toasts.success('Node duplicated');
@@ -137,15 +137,15 @@ return;
 
 function addChild() {
     if (!selectedRow.value || !selectedRow.value.isContainer) {
-return;
-}
+        return;
+    }
 
     if (selectedRow.value.kind === 'array') {
         const raw = window.prompt('New item value (JSON literal):', '""');
 
         if (raw === null) {
-return;
-}
+            return;
+        }
 
         store.appendItem(selectedRow.value.path, parseEditedValue(raw));
         toasts.success('Item appended');
@@ -153,14 +153,14 @@ return;
         const key = window.prompt('New key:');
 
         if (!key) {
-return;
-}
+            return;
+        }
 
         const raw = window.prompt('New value (JSON literal):', '""');
 
         if (raw === null) {
-return;
-}
+            return;
+        }
 
         store.addProperty(selectedRow.value.path, key, parseEditedValue(raw));
         toasts.success('Property added');
@@ -169,14 +169,17 @@ return;
 
 function editValue() {
     if (!selectedRow.value || selectedRow.value.isContainer) {
-return;
-}
+        return;
+    }
 
-    const next = window.prompt('New value (JSON literal):', String(selectedRow.value.preview));
+    const next = window.prompt(
+        'New value (JSON literal):',
+        String(selectedRow.value.preview),
+    );
 
     if (next === null) {
-return;
-}
+        return;
+    }
 
     store.updateValue(selectedRow.value.path, parseEditedValue(next));
     toasts.success('Value updated');
@@ -188,12 +191,12 @@ const sectionPreview = ref(true);
 
 const previewText = computed(() => {
     if (value.value === undefined) {
-return '';
-}
+        return '';
+    }
 
     if (typeof value.value === 'string') {
-return value.value;
-}
+        return value.value;
+    }
 
     try {
         const s = JSON.stringify(value.value, null, 2);
@@ -225,8 +228,13 @@ return value.value;
             </span>
         </header>
 
-        <div v-if="!selectedRow" class="flex flex-1 items-center justify-center px-6">
-            <div class="text-center text-[12px] leading-relaxed text-[var(--color-fg-faint)]">
+        <div
+            v-if="!selectedRow"
+            class="flex flex-1 items-center justify-center px-6"
+        >
+            <div
+                class="text-center text-[12px] leading-relaxed text-[var(--color-fg-faint)]"
+            >
                 <Icon
                     name="layers"
                     :size="22"
@@ -245,7 +253,7 @@ return value.value;
                     Path
                 </div>
                 <div
-                    class="break-all rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5 font-mono text-[11.5px] leading-relaxed text-[var(--color-fg)]"
+                    class="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5 font-mono text-[11.5px] leading-relaxed break-all text-[var(--color-fg)]"
                 >
                     {{ pathStr }}
                 </div>
@@ -266,32 +274,50 @@ return value.value;
                     @click="sectionMeta = !sectionMeta"
                 >
                     <span>Metadata</span>
-                    <Icon :name="sectionMeta ? 'chevron-down' : 'chevron-right'" :size="11" />
+                    <Icon
+                        :name="sectionMeta ? 'chevron-down' : 'chevron-right'"
+                        :size="11"
+                    />
                 </button>
                 <div v-if="sectionMeta" class="space-y-1.5 text-[12px]">
                     <div class="flex justify-between">
                         <span class="text-[var(--color-fg-muted)]">Type</span>
-                        <span class="font-mono text-[var(--color-fg)]">{{ valueKind }}</span>
+                        <span class="font-mono text-[var(--color-fg)]">{{
+                            valueKind
+                        }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--color-fg-muted)]">Depth</span>
-                        <span class="font-mono text-[var(--color-fg)]">{{ selectedRow.depth }}</span>
+                        <span class="font-mono text-[var(--color-fg)]">{{
+                            selectedRow.depth
+                        }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--color-fg-muted)]">Parent</span>
-                        <span class="font-mono text-[var(--color-fg)]">{{ selectedRow.parentKind }}</span>
+                        <span class="font-mono text-[var(--color-fg)]">{{
+                            selectedRow.parentKind
+                        }}</span>
                     </div>
-                    <div v-if="arrayIndex !== null" class="flex justify-between">
+                    <div
+                        v-if="arrayIndex !== null"
+                        class="flex justify-between"
+                    >
                         <span class="text-[var(--color-fg-muted)]">Index</span>
-                        <span class="font-mono text-[var(--color-fg)]">{{ arrayIndex }}</span>
+                        <span class="font-mono text-[var(--color-fg)]">{{
+                            arrayIndex
+                        }}</span>
                     </div>
                     <div v-if="valueLength" class="flex justify-between">
                         <span class="text-[var(--color-fg-muted)]">Length</span>
-                        <span class="font-mono text-[var(--color-fg)]">{{ valueLength }}</span>
+                        <span class="font-mono text-[var(--color-fg)]">{{
+                            valueLength
+                        }}</span>
                     </div>
                     <div v-if="valueBytes" class="flex justify-between">
                         <span class="text-[var(--color-fg-muted)]">Bytes</span>
-                        <span class="font-mono text-[var(--color-fg)]">{{ valueBytes }}</span>
+                        <span class="font-mono text-[var(--color-fg)]">{{
+                            valueBytes
+                        }}</span>
                     </div>
                 </div>
             </div>
@@ -304,7 +330,12 @@ return value.value;
                     @click="sectionActions = !sectionActions"
                 >
                     <span>Actions</span>
-                    <Icon :name="sectionActions ? 'chevron-down' : 'chevron-right'" :size="11" />
+                    <Icon
+                        :name="
+                            sectionActions ? 'chevron-down' : 'chevron-right'
+                        "
+                        :size="11"
+                    />
                 </button>
                 <div v-if="sectionActions" class="grid grid-cols-2 gap-1.5">
                     <Button variant="subtle" size="xs" @click="copyValue">
@@ -364,12 +395,18 @@ return value.value;
                     @click="sectionPreview = !sectionPreview"
                 >
                     <span>Preview</span>
-                    <Icon :name="sectionPreview ? 'chevron-down' : 'chevron-right'" :size="11" />
+                    <Icon
+                        :name="
+                            sectionPreview ? 'chevron-down' : 'chevron-right'
+                        "
+                        :size="11"
+                    />
                 </button>
                 <pre
                     v-if="sectionPreview"
-                    class="max-h-72 overflow-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2 font-mono text-[11.5px] leading-[1.55] whitespace-pre-wrap break-words text-[var(--color-fg)]"
-                >{{ previewText }}</pre>
+                    class="max-h-72 overflow-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2 font-mono text-[11.5px] leading-[1.55] break-words whitespace-pre-wrap text-[var(--color-fg)]"
+                    >{{ previewText }}</pre
+                >
             </div>
         </div>
     </aside>

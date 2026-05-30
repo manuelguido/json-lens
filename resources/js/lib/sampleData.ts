@@ -1,6 +1,10 @@
 import type { JsonValue } from './types';
 
-export const SAMPLE_DATASETS: { name: string; description: string; value: JsonValue }[] = [
+export const SAMPLE_DATASETS: {
+    name: string;
+    description: string;
+    value: JsonValue;
+}[] = [
     {
         name: 'API response',
         description: 'A typical paginated REST response with nested resources.',
@@ -23,7 +27,11 @@ export const SAMPLE_DATASETS: { name: string; description: string; value: JsonVa
                         preferences: {
                             theme: 'dark',
                             density: 'compact',
-                            notifications: { email: true, push: false, sms: null },
+                            notifications: {
+                                email: true,
+                                push: false,
+                                sms: null,
+                            },
                         },
                     },
                 },
@@ -39,7 +47,11 @@ export const SAMPLE_DATASETS: { name: string; description: string; value: JsonVa
                         preferences: {
                             theme: 'system',
                             density: 'comfortable',
-                            notifications: { email: true, push: true, sms: false },
+                            notifications: {
+                                email: true,
+                                push: true,
+                                sms: false,
+                            },
                         },
                     },
                 },

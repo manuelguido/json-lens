@@ -25,8 +25,8 @@ async function onFile(e: Event) {
     const f = input.files?.[0];
 
     if (!f) {
-return;
-}
+        return;
+    }
 
     const text = await f.text();
 
@@ -62,8 +62,8 @@ function loadSample(i: number) {
 
 function onKey(e: KeyboardEvent) {
     if (e.key === 'Escape') {
-emit('close');
-}
+        emit('close');
+    }
 }
 </script>
 
@@ -76,7 +76,7 @@ emit('close');
     >
         <div
             v-if="open"
-            class="fixed inset-0 z-40 flex items-start justify-center bg-[#06080b]/70 backdrop-blur-[2px] pt-[12vh]"
+            class="fixed inset-0 z-40 flex items-start justify-center bg-[#06080b]/70 pt-[12vh] backdrop-blur-[2px]"
             @click.self="emit('close')"
             @keydown="onKey"
         >
@@ -85,8 +85,14 @@ emit('close');
             >
                 <header class="flex items-center justify-between px-5 pt-4">
                     <div>
-                        <h2 class="text-[14px] font-semibold tracking-tight text-[var(--color-fg)]">Import JSON</h2>
-                        <p class="mt-0.5 text-[12px] text-[var(--color-fg-muted)]">
+                        <h2
+                            class="text-[14px] font-semibold tracking-tight text-[var(--color-fg)]"
+                        >
+                            Import JSON
+                        </h2>
+                        <p
+                            class="mt-0.5 text-[12px] text-[var(--color-fg-muted)]"
+                        >
                             Paste, upload, or load a sample document.
                         </p>
                     </div>
@@ -100,25 +106,37 @@ emit('close');
                 </header>
 
                 <!-- Tabs -->
-                <nav class="mt-3 flex gap-1 border-b border-[var(--color-divider)] px-3">
+                <nav
+                    class="mt-3 flex gap-1 border-b border-[var(--color-divider)] px-3"
+                >
                     <button
                         v-for="t in [
-                            { id: 'paste', label: 'Paste / Upload', icon: 'paste' },
-                            { id: 'sample', label: 'Samples', icon: 'sparkles' },
+                            {
+                                id: 'paste',
+                                label: 'Paste / Upload',
+                                icon: 'paste',
+                            },
+                            {
+                                id: 'sample',
+                                label: 'Samples',
+                                icon: 'sparkles',
+                            },
                         ] as const"
                         :key="t.id"
                         type="button"
                         class="jl-focus relative flex items-center gap-1.5 px-3 py-2 text-[12px] transition"
-                        :class="tab === t.id
-                            ? 'text-[var(--color-fg)]'
-                            : 'text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]'"
+                        :class="
+                            tab === t.id
+                                ? 'text-[var(--color-fg)]'
+                                : 'text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]'
+                        "
                         @click="tab = t.id"
                     >
                         <Icon :name="t.icon" :size="12" />
                         {{ t.label }}
                         <span
                             v-if="tab === t.id"
-                            class="absolute -bottom-px left-2 right-2 h-px bg-[var(--color-accent)]"
+                            class="absolute right-2 -bottom-px left-2 h-px bg-[var(--color-accent)]"
                         />
                     </button>
                 </nav>
@@ -138,13 +156,16 @@ emit('close');
                         >
                             <Icon name="warning" :size="12" /> {{ localError }}
                         </p>
-                        <div class="mt-3 flex items-center justify-between gap-2">
+                        <div
+                            class="mt-3 flex items-center justify-between gap-2"
+                        >
                             <button
                                 type="button"
                                 class="jl-focus inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-[12px] text-[var(--color-fg)] transition hover:bg-[var(--color-surface-3)]"
                                 @click="pickFile"
                             >
-                                <Icon name="upload" :size="12" /> Upload .json file
+                                <Icon name="upload" :size="12" /> Upload .json
+                                file
                             </button>
                             <input
                                 ref="fileInput"
@@ -174,8 +195,16 @@ emit('close');
                                     @click="loadSample(i)"
                                 >
                                     <div>
-                                        <div class="text-[13px] font-medium text-[var(--color-fg)]">{{ s.name }}</div>
-                                        <div class="text-[11.5px] text-[var(--color-fg-muted)]">{{ s.description }}</div>
+                                        <div
+                                            class="text-[13px] font-medium text-[var(--color-fg)]"
+                                        >
+                                            {{ s.name }}
+                                        </div>
+                                        <div
+                                            class="text-[11.5px] text-[var(--color-fg-muted)]"
+                                        >
+                                            {{ s.description }}
+                                        </div>
                                     </div>
                                     <Icon
                                         name="arrow"

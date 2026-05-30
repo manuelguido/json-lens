@@ -13,7 +13,10 @@ const isMac =
     /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
 function matches(e: KeyboardEvent, spec: string): boolean {
-    const parts = spec.toLowerCase().split('+').map((p) => p.trim());
+    const parts = spec
+        .toLowerCase()
+        .split('+')
+        .map((p) => p.trim());
     const key = parts[parts.length - 1];
     const want = new Set(parts.slice(0, -1));
 
@@ -24,40 +27,40 @@ function matches(e: KeyboardEvent, spec: string): boolean {
     const modPressed = isMac ? e.metaKey : e.ctrlKey;
 
     if (wantMod !== modPressed) {
-return false;
-}
+        return false;
+    }
 
     if (wantShift !== e.shiftKey) {
-return false;
-}
+        return false;
+    }
 
     if (wantAlt !== e.altKey) {
-return false;
-}
+        return false;
+    }
 
     const eKey = e.key.toLowerCase();
 
     if (key === 'space') {
-return e.code === 'Space';
-}
+        return e.code === 'Space';
+    }
 
     return eKey === key;
 }
 
 function isEditable(el: EventTarget | null): boolean {
     if (!(el instanceof HTMLElement)) {
-return false;
-}
+        return false;
+    }
 
     const tag = el.tagName;
 
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
-return true;
-}
+        return true;
+    }
 
     if (el.isContentEditable) {
-return true;
-}
+        return true;
+    }
 
     return false;
 }
@@ -66,12 +69,12 @@ export function useHotkeys(defs: HotkeyDef[]) {
     function onKey(e: KeyboardEvent) {
         for (const d of defs) {
             if (!matches(e, d.keys)) {
-continue;
-}
+                continue;
+            }
 
             if (!d.allowInInput && isEditable(e.target)) {
-continue;
-}
+                continue;
+            }
 
             e.preventDefault();
             d.handler(e);

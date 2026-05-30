@@ -26,12 +26,12 @@ let hydrated = false;
 
 function persist() {
     if (!hydrated) {
-return;
-}
+        return;
+    }
 
     if (typeof window === 'undefined') {
-return;
-}
+        return;
+    }
 
     try {
         localStorage.setItem(
@@ -86,7 +86,10 @@ export function useUiState() {
                 if (raw) {
                     const parsed = JSON.parse(raw) as Partial<UiState>;
 
-                    if (parsed.viewMode === 'tree' || parsed.viewMode === 'graph') {
+                    if (
+                        parsed.viewMode === 'tree' ||
+                        parsed.viewMode === 'graph'
+                    ) {
                         state.viewMode = parsed.viewMode;
                     }
 

@@ -17,7 +17,9 @@ const props = defineProps<{
     viewportH: number;
 }>();
 
-const emit = defineEmits<{ (e: 'pan-to', worldX: number, worldY: number): void }>();
+const emit = defineEmits<{
+    (e: 'pan-to', worldX: number, worldY: number): void;
+}>();
 
 const PAD = 6;
 const MM_W = 200 - PAD * 2;
@@ -35,8 +37,8 @@ const offsetY = computed(() => -props.layout.bounds.minY * scale.value + PAD);
 
 const viewportRect = computed(() => {
     if (props.zoom <= 0 || props.viewportW <= 0) {
-return { x: 0, y: 0, w: 0, h: 0 };
-}
+        return { x: 0, y: 0, w: 0, h: 0 };
+    }
 
     const worldX = -props.panX / props.zoom;
     const worldY = -props.panY / props.zoom;
@@ -63,8 +65,8 @@ function onPointer(e: PointerEvent) {
 
 function onMove(e: PointerEvent) {
     if (e.buttons !== 1) {
-return;
-}
+        return;
+    }
 
     onPointer(e);
 }

@@ -17,12 +17,12 @@ let debounceTimer: number | undefined;
 
 watch(query, (v) => {
     if (typeof window === 'undefined') {
-return;
-}
+        return;
+    }
 
     if (debounceTimer) {
-window.clearTimeout(debounceTimer);
-}
+        window.clearTimeout(debounceTimer);
+    }
 
     debounceTimer = window.setTimeout(() => {
         debounced.value = v;
@@ -36,8 +36,8 @@ const matches = computed<SearchMatch[]>(() => {
     const q = debounced.value.trim().toLowerCase();
 
     if (!q || store.document.value === null) {
-return [];
-}
+        return [];
+    }
 
     const out: SearchMatch[] = [];
     scan(store.document.value, [], q, out);
@@ -48,8 +48,8 @@ return [];
 function scan(value: unknown, path: JsonPath, q: string, out: SearchMatch[]) {
     if (Array.isArray(value)) {
         for (let i = 0; i < value.length; i++) {
-scan(value[i], [...path, i], q, out);
-}
+            scan(value[i], [...path, i], q, out);
+        }
 
         return;
     }
@@ -59,7 +59,11 @@ scan(value[i], [...path, i], q, out);
             const childPath: JsonPath = [...path, k];
 
             if (k.toLowerCase().includes(q)) {
-                out.push({ rowId: pathToId(childPath), path: childPath, field: 'key' });
+                out.push({
+                    rowId: pathToId(childPath),
+                    path: childPath,
+                    field: 'key',
+                });
             }
 
             scan((value as Record<string, unknown>)[k], childPath, q, out);
@@ -72,12 +76,12 @@ scan(value[i], [...path, i], q, out);
     let str: string;
 
     if (value === null) {
-str = 'null';
-} else if (typeof value === 'string') {
-str = value;
-} else {
-str = String(value);
-}
+        str = 'null';
+    } else if (typeof value === 'string') {
+        str = value;
+    } else {
+        str = String(value);
+    }
 
     if (str.toLowerCase().includes(q)) {
         out.push({ rowId: pathToId(path), path, field: 'value' });
@@ -88,24 +92,24 @@ const matchedRowIds = computed(() => {
     const set = new Set<string>();
 
     for (const m of matches.value) {
-set.add(m.rowId);
-}
+        set.add(m.rowId);
+    }
 
     return set;
 });
 
 function next() {
     if (matches.value.length === 0) {
-return;
-}
+        return;
+    }
 
     activeIndex.value = (activeIndex.value + 1) % matches.value.length;
 }
 
 function prev() {
     if (matches.value.length === 0) {
-return;
-}
+        return;
+    }
 
     activeIndex.value =
         (activeIndex.value - 1 + matches.value.length) % matches.value.length;
@@ -127,8 +131,8 @@ export function highlightSegments(
     needle: string,
 ): { text: string; match: boolean }[] {
     if (!needle) {
-return [{ text: haystack, match: false }];
-}
+        return [{ text: haystack, match: false }];
+    }
 
     const out: { text: string; match: boolean }[] = [];
     const lower = haystack.toLowerCase();
@@ -144,8 +148,8 @@ return [{ text: haystack, match: false }];
         }
 
         if (idx > i) {
-out.push({ text: haystack.slice(i, idx), match: false });
-}
+            out.push({ text: haystack.slice(i, idx), match: false });
+        }
 
         out.push({ text: haystack.slice(idx, idx + q.length), match: true });
         i = idx + q.length;
@@ -157,19 +161,19 @@ out.push({ text: haystack.slice(i, idx), match: false });
 /** Filter visible rows when a "filter mode" toggle is on (future). */
 export function rowsMatching(rows: TreeRow[], q: string): TreeRow[] {
     if (!q) {
-return rows;
-}
+        return rows;
+    }
 
     const ql = q.toLowerCase();
 
     return rows.filter((r) => {
         if (r.keyLabel && r.keyLabel.toLowerCase().includes(ql)) {
-return true;
-}
+            return true;
+        }
 
         if (r.preview.toLowerCase().includes(ql)) {
-return true;
-}
+            return true;
+        }
 
         return false;
     });
